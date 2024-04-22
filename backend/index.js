@@ -4,6 +4,11 @@ require("dotenv").config();
 const PORT = process.env.PORT || 5000;
 const router = require("./routes/goalRoutes");
 
+const connectDb = require("./config/db");
+
+// Connect to Mongo
+connectDb();
+
 // Body-Parser Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
