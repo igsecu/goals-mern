@@ -2,7 +2,7 @@ const Goal = require("../models/goalModel");
 
 // Get goals
 const getGoals = async (req, res, next) => {
-  const goals = await Goal.find();
+  const goals = await Goal.find({ user: req.user.id });
   res.status(200).json({ data: goals });
 };
 
@@ -17,6 +17,7 @@ const createGoal = async (req, res, next) => {
   }
 
   const goal = await Goal.create({
+    user: req.user.id,
     text,
   });
 
@@ -33,6 +34,14 @@ const updateGoal = async (req, res, next) => {
   if (!goal) {
     return res.status(404).json({
       msg: `Goal with ID: ${id} not found!`,
+    });
+  }
+
+  // Goal is not logged in user
+  if (goal.user.toString() !== req.user.id) {
+    res.status(401).json({
+      statusCode: 401,
+      msg: "You can not update a goal that is not yours!",
     });
   }
 
@@ -55,7 +64,15 @@ const deleteGoal = async (req, res, next) => {
     });
   }
 
-  await goal.remove();
+  // Goal is not logged in user
+  if (goal.user.toString() !== req.user.id) {
+    res.status(401).json({
+      statusCode: 401,
+      msg: "You can not delete a goal that is not yours!",
+    });
+  }
+
+  await goal.deleteOne();
 
   res.status(200).json({ msg: "Goal deleted!", data: goal });
 };
