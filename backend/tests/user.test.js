@@ -391,3 +391,58 @@ describe("PUT /api/goals/:id route -> update goal", () => {
     expect(response.body.msg).toBe("Goal updated successfully!");
   });
 });
+
+describe("DELETE /api/goals/:id route -> delete goal", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).delete(
+      "/api/goals/66283039e1a333ca9758ec78"
+    );
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 200 status code -> login success", async () => {
+    const user = {
+      email: "user2@gmail.com",
+      password: "Password14!",
+    };
+    const response = await request(app).post("/api/users/login").send(user);
+    expect(response.status).toBe(200);
+    expect(response.body.msg).toBe("Login successfully!");
+    token = response.body.token;
+  });
+  it("it should return 404 status code -> goal not found", async () => {
+    const response = await request(app)
+      .delete("/api/goals/66283039e1a333ca9758ec78")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe(
+      "Goal with ID: 66283039e1a333ca9758ec78 not found!"
+    );
+  });
+  it("it should return 401 status code -> goal not yours", async () => {
+    const response = await request(app)
+      .delete("/api/goals/662834f01a81f374e51a23dc")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe(
+      "You can not delete a goal that is not yours!"
+    );
+  });
+  it("it should return 200 status code -> login success", async () => {
+    const user = {
+      email: "user1@gmail.com",
+      password: "Password14!",
+    };
+    const response = await request(app).post("/api/users/login").send(user);
+    expect(response.status).toBe(200);
+    expect(response.body.msg).toBe("Login successfully!");
+    token = response.body.token;
+  });
+  it("it should return 200 status code -> goal deleted", async () => {
+    const response = await request(app)
+      .delete(`/api/goals/${goal1_id}`)
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body.msg).toBe("Goal deleted!");
+  });
+});
