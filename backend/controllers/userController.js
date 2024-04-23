@@ -4,10 +4,38 @@ const bcrypt = require("bcryptjs");
 
 require("dotenv").config();
 
+const {
+  validateName,
+  validateEmail,
+  validatePassword,
+} = require("../utils/index");
+
 // Register User
 const registerUser = async (req, res, next) => {
   const { name, email, password } = req.body;
   // Validations
+
+  if (validateName(name)) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: validateName(name),
+    });
+  }
+
+  if (validatePassword(password)) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: validatePassword(password),
+    });
+  }
+
+  if (validateEmail(email)) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: validateEmail(email),
+    });
+  }
+
   try {
     // Check if user exists
     const userExists = await User.findOne({ email });
@@ -42,6 +70,7 @@ const registerUser = async (req, res, next) => {
       });
     }
   } catch (error) {
+    console.log(error.message);
     return next("Error trying to register new user");
   }
 };
@@ -51,6 +80,19 @@ const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
 
   // Validations -> check if email and password are missing
+  if (!email) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: "Email is missing",
+    });
+  }
+
+  if (!password) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: "Password is missing",
+    });
+  }
 
   try {
     // Check if user exists
@@ -64,22 +106,27 @@ const loginUser = async (req, res, next) => {
     }
 
     // Check password
-    if (password !== (await bcrypt.compare(password, user.password))) {
-      return res.status(400).json({
-        statusCode: 400,
-        msg: "Incorrect password!",
-      });
-    }
-
-    res.status(200).json({
-      statusCode: 200,
-      msg: "Login successfully!",
-      data: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
-      token: generateToken(user._id),
+    bcrypt.compare(password, user.password, async (err, isMatch) => {
+      if (err) {
+        return next("Error during the login process!");
+      }
+      if (!isMatch) {
+        return res.status(400).json({
+          statusCode: 400,
+          msg: "Incorrect password!",
+        });
+      } else {
+        return res.status(200).json({
+          statusCode: 200,
+          msg: "Login successfully!",
+          data: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+          },
+          token: generateToken(user._id),
+        });
+      }
     });
   } catch (error) {
     return next("Error trying to authenticate a user");
