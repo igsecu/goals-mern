@@ -243,3 +243,24 @@ describe("POST /api/users/login route -> login process", () => {
     token = response.body.token;
   });
 });
+
+describe("GET /api/users/user route -> get logged in user", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).get("/api/users/user");
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  /* it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app)
+      .get("/api/users/user")
+      .set("Authorization", "Bearer hola");
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  }); */
+  it("it should return 200 status code -> get user data", async () => {
+    const response = await request(app)
+      .get("/api/users/user")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
