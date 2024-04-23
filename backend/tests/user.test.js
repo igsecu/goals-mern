@@ -196,3 +196,50 @@ describe("POST /api/users route -> create new user", () => {
     );
   });
 });
+
+let token;
+
+describe("POST /api/users/login route -> login process", () => {
+  it("it should return 400 status code -> email is missing", async () => {
+    const user = {};
+    const response = await request(app).post("/api/users/login").send(user);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Email is missing");
+  });
+  it("it should return 400 status code -> password is missing", async () => {
+    const user = {
+      email: "user@gmail.com",
+    };
+    const response = await request(app).post("/api/users/login").send(user);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Password is missing");
+  });
+  it("it should return 400 status code -> email not exist", async () => {
+    const user = {
+      email: "user@gmail.com",
+      password: "Password14",
+    };
+    const response = await request(app).post("/api/users/login").send(user);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Email does not exist!");
+  });
+  it("it should return 400 status code -> incorrect password", async () => {
+    const user = {
+      email: "user1@gmail.com",
+      password: "Password14",
+    };
+    const response = await request(app).post("/api/users/login").send(user);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Incorrect password!");
+  });
+  it("it should return 200 status code -> login success", async () => {
+    const user = {
+      email: "user1@gmail.com",
+      password: "Password14!",
+    };
+    const response = await request(app).post("/api/users/login").send(user);
+    expect(response.status).toBe(200);
+    expect(response.body.msg).toBe("Login successfully!");
+    token = response.body.token;
+  });
+});
