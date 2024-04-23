@@ -3,7 +3,13 @@ const Goal = require("../models/goalModel");
 // Get goals
 const getGoals = async (req, res, next) => {
   const goals = await Goal.find({ user: req.user.id });
-  res.status(200).json({ data: goals });
+  if (!goals.length) {
+    return res.status(404).json({
+      statusCode: 404,
+      msg: "You do not have goals!",
+    });
+  }
+  res.status(200).json({ statusCode: 200, data: goals });
 };
 
 // Create goal
@@ -21,7 +27,9 @@ const createGoal = async (req, res, next) => {
     text,
   });
 
-  res.status(200).json({ msg: "Goal created successfully!", data: goal });
+  res
+    .status(201)
+    .json({ statusCode: 201, msg: "Goal created successfully!", data: goal });
 };
 
 // Update goal
