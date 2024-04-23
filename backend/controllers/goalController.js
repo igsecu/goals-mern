@@ -76,21 +76,24 @@ const deleteGoal = async (req, res, next) => {
 
   if (!goal) {
     return res.status(404).json({
+      statusCode: 404,
       msg: `Goal with ID: ${id} not found!`,
     });
   }
 
   // Goal is not logged in user
   if (goal.user.toString() !== req.user.id) {
-    res.status(401).json({
+    return res.status(401).json({
       statusCode: 401,
       msg: "You can not delete a goal that is not yours!",
     });
   }
 
-  await goal.deleteOne();
+  const goalDeleted = await goal.deleteOne();
 
-  res.status(200).json({ msg: "Goal deleted!", data: goal });
+  if (goalDeleted.deletedCount === 1) {
+    res.status(200).json({ statusCode: 200, msg: "Goal deleted!", data: goal });
+  }
 };
 
 module.exports = {
