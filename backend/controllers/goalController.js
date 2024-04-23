@@ -45,19 +45,27 @@ const updateGoal = async (req, res, next) => {
     });
   }
 
+  if (!text) {
+    return res.status(400).json({
+      msg: "Text is missing",
+    });
+  }
+
   // Goal is not logged in user
   if (goal.user.toString() !== req.user.id) {
-    res.status(401).json({
+    return res.status(401).json({
       statusCode: 401,
       msg: "You can not update a goal that is not yours!",
     });
   }
 
-  const updatedGoal = await Goal.findByIdAndUpdate(id, text, { new: true });
+  const updatedGoal = await Goal.findByIdAndUpdate(id, { text }, { new: true });
 
-  res
-    .status(200)
-    .json({ msg: "Goal Updated Successfully!", data: updatedGoal });
+  res.status(200).json({
+    statusCode: 200,
+    msg: "Goal updated successfully!",
+    data: updatedGoal,
+  });
 };
 
 // Delete goal
