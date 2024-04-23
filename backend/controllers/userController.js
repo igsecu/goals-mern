@@ -87,7 +87,22 @@ const loginUser = async (req, res, next) => {
 };
 
 // Get user data
-const getUser = (req, res, next) => {};
+const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    res.status(200).json({
+      statusCode: 200,
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    return next("Error trying to get user data");
+  }
+};
 
 // Generate JWT
 const generateToken = (id) => {
