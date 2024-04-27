@@ -5,10 +5,10 @@ const PORT = process.env.PORT || 5000;
 const goalRouter = require("./routes/goalRoutes");
 const userRouter = require("./routes/userRoutes");
 
-const connectDb = require("./config/db");
+const connectDB = require("./config/db");
 
 // Connect to Mongo
-connectDb();
+connectDB();
 
 // Body-Parser Middleware
 app.use(express.json());
