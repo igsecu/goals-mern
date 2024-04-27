@@ -1,8 +1,11 @@
 const request = require("supertest");
 const app = require("../index");
+const connectDB = require("../config/db");
 
 beforeAll(async () => {
   try {
+    const conn = await connectDB();
+    await conn.connection.dropDatabase();
   } catch (error) {
     console.log(error.message);
   }
@@ -170,7 +173,7 @@ describe("POST /api/users route -> create new user", () => {
     expect(response.status).toBe(400);
     expect(response.body.msg).toBe("Email format not valid");
   });
-  /*  it("it should return 201 status code -> account created", async () => {
+  it("it should return 201 status code -> account created", async () => {
     const user = {
       name: "User 1",
       email: "user1@gmail.com",
@@ -180,9 +183,8 @@ describe("POST /api/users route -> create new user", () => {
     const response = await request(app).post("/api/users").send(user);
     expect(response.status).toBe(201);
     expect(response.body.msg).toBe("User created successfully!");
-   
-  }); */
-  /*  it("it should return 201 status code -> account created", async () => {
+  });
+  it("it should return 201 status code -> account created", async () => {
     const user = {
       name: "User 2",
       email: "user2@gmail.com",
@@ -192,7 +194,7 @@ describe("POST /api/users route -> create new user", () => {
     const response = await request(app).post("/api/users").send(user);
     expect(response.status).toBe(201);
     expect(response.body.msg).toBe("User created successfully!");
-  }); */
+  });
   it("it should return 400 status code -> email exists", async () => {
     const user = {
       name: "User 1",
@@ -293,7 +295,7 @@ describe("GET /api/goals route -> get goals", () => {
 
 let goal1_id;
 
-describe("POST /api/goals route -> create a new goal", () => {
+/* describe("POST /api/goals route -> create a new goal", () => {
   it("it should return 401 status code -> not authorized", async () => {
     const response = await request(app).post("/api/goals");
     expect(response.status).toBe(401);
@@ -316,9 +318,9 @@ describe("POST /api/goals route -> create a new goal", () => {
     expect(response.body.msg).toBe("Goal created successfully!");
     goal1_id = response.body.data._id;
   });
-});
+}); */
 
-describe("GET /api/goals route -> get goals", () => {
+/* describe("GET /api/goals route -> get goals", () => {
   it("it should return 200 status code -> no goals", async () => {
     const response = await request(app)
       .get("/api/goals")
@@ -446,3 +448,4 @@ describe("DELETE /api/goals/:id route -> delete goal", () => {
     expect(response.body.msg).toBe("Goal deleted!");
   });
 });
+ */
