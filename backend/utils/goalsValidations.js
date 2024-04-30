@@ -29,8 +29,32 @@ const validateUrgency = (urgency) => {
   return false;
 };
 
+// Validate Title Update
+const validateTitleUpdate = (title) => {
+  if (typeof title !== "string") return "Title must be a string";
+  if (title.length > 30) return "Title must be 30 characters or less";
+  return false;
+};
+
+// Validate Description Update
+const validateDescriptionUpdate = (description) => {
+  if (typeof description !== "string") return "Description must be a string";
+  if (description.length > 100)
+    return "Description must be 100 characters or less";
+  return false;
+};
+
+function isValidObjectId(id) {
+  // ObjectID consists of 24 hexadecimal characters (0-9, a-f)
+  const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+  return objectIdRegex.test(id);
+}
+
 module.exports = {
   validateTitle,
   validateDescription,
   validateUrgency,
+  validateTitleUpdate,
+  validateDescriptionUpdate,
+  isValidObjectId,
 };
