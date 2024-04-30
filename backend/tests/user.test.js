@@ -603,7 +603,7 @@ describe("GET /api/goals/urgency/medium route -> get medium urgency goals", () =
   });
 });
 
-describe("GET /api/goals/urgency/high route -> get medium urgency goals", () => {
+describe("GET /api/goals/urgency/high route -> get high urgency goals", () => {
   it("it should return 401 status code -> not authorized", async () => {
     const response = await request(app).get("/api/goals/urgency/high");
 
@@ -615,5 +615,21 @@ describe("GET /api/goals/urgency/high route -> get medium urgency goals", () => 
       .get("/api/goals/urgency/high")
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(200);
+  });
+});
+
+describe("GET /api/goals/completed route -> get completed goals", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).get("/api/goals/completed");
+
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 404 status code -> no completed goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/completed")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe("You do not have completed goals!");
   });
 });
