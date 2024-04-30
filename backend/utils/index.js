@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 // Validates password
 const validatePassword = (password) => {
   if (!password) return "Password is missing";
