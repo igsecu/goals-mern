@@ -9,6 +9,7 @@ const {
   updateGoal,
   deleteGoal,
   getCompletedGoals,
+  updateGoalCompleted,
 } = require("../controllers/goalController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -23,6 +24,8 @@ router.get("/urgency/medium", protect, getMediumGoals);
 router.get("/urgency/low", protect, getLowGoals);
 // Create new goal
 router.post("/", protect, createGoal);
+// Update goal completed
+router.put("/:id/completed", protect, updateGoalCompleted);
 // Update goal
 router.put("/:id", protect, updateGoal);
 // Delete goal
