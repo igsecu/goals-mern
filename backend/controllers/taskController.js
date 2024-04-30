@@ -70,4 +70,114 @@ const createTask = async (req, res, next) => {
   }
 };
 
-module.exports = { createTask };
+// Update Task Progress
+const updateTaskProgress = async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: `ID: ${id} - Invalid format!`,
+    });
+  }
+
+  try {
+    const task = await Task.findById(id);
+
+    if (!task) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: `Task with ID: ${id} not found!`,
+      });
+    }
+
+    if (task.user.toString() !== req.user.id) {
+      return res.status(401).json({
+        statusCode: 401,
+        msg: "You can not update a task that is not yours!",
+      });
+    }
+
+    const updateTask = await Task.findByIdAndUpdate(
+      id,
+      {
+        status: "IN PROGRESS",
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      msg: "Task updated successfully!",
+      data: updateTask,
+    });
+  } catch (error) {
+    return next("Error trying to update task");
+  }
+};
+
+// Update Task Completed
+const updateTaskCompleted = async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: `ID: ${id} - Invalid format!`,
+    });
+  }
+
+  try {
+    const task = await Task.findById(id);
+
+    if (!task) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: `Task with ID: ${id} not found!`,
+      });
+    }
+
+    if (task.user.toString() !== req.user.id) {
+      return res.status(401).json({
+        statusCode: 401,
+        msg: "You can not update a task that is not yours!",
+      });
+    }
+
+    const updateTask = await Task.findByIdAndUpdate(
+      id,
+      {
+        status: "COMPLETED",
+      },
+      { new: true }
+    );
+
+    const tasks = await Task.find({
+      goal: task.goal,
+    });
+
+    if (tasks.every((t) => t.status === "COMPLETED")) {
+      const goalUpdated = await Goal.findByIdAndUpdate(
+        task.goal,
+        { isCompleted: true },
+        { new: true }
+      );
+
+      return res.status(200).json({
+        statusCode: 200,
+        msg: `You completed the Goal: ${goalUpdated.title}!`,
+        data: goalUpdated,
+      });
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      msg: "Task updated successfully!",
+      data: updateTask,
+    });
+  } catch (error) {
+    return next("Error trying to update task");
+  }
+};
+
+module.exports = { createTask, updateTaskProgress, updateTaskCompleted };
