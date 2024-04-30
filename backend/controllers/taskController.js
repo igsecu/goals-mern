@@ -60,6 +60,10 @@ const createTask = async (req, res, next) => {
       goal: goalId,
     });
 
+    await Goal.findByIdAndUpdate(goalId, {
+      tasks: [...goal.tasks, taskCreated],
+    });
+
     res.status(201).json({
       statusCode: 201,
       msg: "Task created successfully!",
@@ -246,6 +250,10 @@ const deleteTask = async (req, res, next) => {
     const taskDeleted = await task.deleteOne();
 
     if (taskDeleted.deletedCount === 1) {
+      await Goal.findByIdAndUpdate(id, {
+        tasks: goal.tasks.filter((t) => t._id !== id),
+      });
+
       res
         .status(200)
         .json({ statusCode: 200, msg: "Task deleted!", data: task });
