@@ -152,27 +152,40 @@ const updateGoal = async (req, res, next) => {
 const deleteGoal = async (req, res, next) => {
   const { id } = req.params;
 
-  const goal = await Goal.findById(id);
+  try {
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: `ID: ${id} - Invalid format!`,
+      });
+    }
 
-  if (!goal) {
-    return res.status(404).json({
-      statusCode: 404,
-      msg: `Goal with ID: ${id} not found!`,
-    });
-  }
+    const goal = await Goal.findById(id);
 
-  // Goal is not logged in user
-  if (goal.user.toString() !== req.user.id) {
-    return res.status(401).json({
-      statusCode: 401,
-      msg: "You can not delete a goal that is not yours!",
-    });
-  }
+    if (!goal) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: `Goal with ID: ${id} not found!`,
+      });
+    }
 
-  const goalDeleted = await goal.deleteOne();
+    // Goal is not logged in user
+    if (goal.user.toString() !== req.user.id) {
+      return res.status(401).json({
+        statusCode: 401,
+        msg: "You can not delete a goal that is not yours!",
+      });
+    }
 
-  if (goalDeleted.deletedCount === 1) {
-    res.status(200).json({ statusCode: 200, msg: "Goal deleted!", data: goal });
+    const goalDeleted = await goal.deleteOne();
+
+    if (goalDeleted.deletedCount === 1) {
+      res
+        .status(200)
+        .json({ statusCode: 200, msg: "Goal deleted!", data: goal });
+    }
+  } catch (error) {
+    return next("Error trying to delete a goal");
   }
 };
 
