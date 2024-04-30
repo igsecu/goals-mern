@@ -1,5 +1,11 @@
 const Goal = require("../models/goalModel");
 
+const {
+  validateTitle,
+  validateDescription,
+  validateUrgency,
+} = require("../utils/goalsValidations");
+
 // Get goals
 const getGoals = async (req, res, next) => {
   const goals = await Goal.find({ user: req.user.id });
@@ -14,22 +20,43 @@ const getGoals = async (req, res, next) => {
 
 // Create goal
 const createGoal = async (req, res, next) => {
-  const { text } = req.body;
+  const { title, description, urgency } = req.body;
 
-  if (!text) {
+  if (validateTitle(title)) {
     return res.status(400).json({
-      msg: "Text is missing",
+      statusCode: 400,
+      msg: validateTitle(title),
     });
   }
 
-  const goal = await Goal.create({
-    user: req.user.id,
-    text,
-  });
+  if (validateDescription(description)) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: validateDescription(description),
+    });
+  }
 
-  res
-    .status(201)
-    .json({ statusCode: 201, msg: "Goal created successfully!", data: goal });
+  if (validateUrgency(urgency)) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: validateUrgency(urgency),
+    });
+  }
+
+  try {
+    const goal = await Goal.create({
+      user: req.user.id,
+      title,
+      description,
+      urgency: urgency.toUpperCase(),
+    });
+
+    res
+      .status(201)
+      .json({ statusCode: 201, msg: "Goal created successfully!", data: goal });
+  } catch (error) {
+    return next("Error trying to create new goal");
+  }
 };
 
 // Update goal
