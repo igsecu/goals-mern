@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const fsExtra = require("fs-extra");
 
 require("dotenv").config();
 
@@ -8,7 +9,11 @@ const {
   validateName,
   validateEmail,
   validatePassword,
+  validateImageSize,
+  validateFileType,
 } = require("../utils/index");
+
+const { uploadUserImage } = require("../utils/cloudinary");
 
 // Register User
 const registerUser = async (req, res, next) => {
@@ -151,6 +156,69 @@ const getUser = async (req, res, next) => {
   }
 };
 
+// Update user image
+const updateUserImage = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (req.files?.image) {
+      if (await validateFileType(req.files.image.tempFilePath)) {
+        const message = await validateFileType(req.files.image.tempFilePath);
+
+        await fsExtra.unlink(req.files.image.tempFilePath);
+
+        return res.status(400).json({
+          statusCode: 400,
+          msg: message,
+        });
+      }
+
+      if (await validateImageSize(req.files.image.tempFilePath)) {
+        const message = await validateImageSize(req.files.image.tempFilePath);
+
+        await fsExtra.unlink(req.files.image.tempFilePath);
+
+        return res.status(400).json({
+          statusCode: 400,
+          msg: message,
+        });
+      }
+
+      const result = await uploadUserImage(req.files.image.tempFilePath);
+
+      await fsExtra.unlink(req.files.image.tempFilePath);
+
+      const userUpdated = await User.findByIdAndUpdate(
+        req.user.id,
+        {
+          image: result.secure_url,
+          image_id: result.public_id,
+        },
+        { new: true }
+      );
+
+      const userFound = await User.findById(req.user.id).select(
+        "-password -image_id"
+      );
+
+      return res.status(200).json({
+        statusCode: 200,
+        msg: "Profile image updated successfully!",
+        data: userFound,
+      });
+    } else {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: "Image file is missing!",
+      });
+    }
+  } catch (error) {
+    await fsExtra.unlink(req.files.image.tempFilePath);
+    console.log(error.message);
+    return next("Error trying to update user profile image");
+  }
+};
+
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -162,4 +230,5 @@ module.exports = {
   registerUser,
   loginUser,
   getUser,
+  updateUserImage,
 };
