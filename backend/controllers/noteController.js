@@ -102,7 +102,7 @@ const deleteNote = async (req, res, next) => {
       });
     }
 
-    const goal = await Goal.findById(task.goal);
+    const goal = await Goal.findById(note.goal);
 
     if (goal.isCompleted === true) {
       return res.status(400).json({
@@ -115,7 +115,7 @@ const deleteNote = async (req, res, next) => {
 
     if (noteDeleted.deletedCount === 1) {
       await Goal.findByIdAndUpdate(id, {
-        tasks: goal.notes.filter((n) => n._id !== id),
+        notes: goal.notes.filter((n) => n._id !== id),
       });
 
       res
@@ -123,6 +123,7 @@ const deleteNote = async (req, res, next) => {
         .json({ statusCode: 200, msg: "Note deleted!", data: note });
     }
   } catch (error) {
+    console.log(error);
     return next("Error trying to delete a note");
   }
 };
