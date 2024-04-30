@@ -544,6 +544,70 @@ const updateGoalImage = async (req, res, next) => {
   }
 };
 
+// Delete goal image
+const deleteGoalImage = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: `ID: ${id} - Invalid format!`,
+      });
+    }
+
+    const goal = await Goal.findById(id);
+
+    if (!goal) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: `Goal with ID: ${id} not found!`,
+      });
+    }
+
+    // Goal is not logged in user
+    if (goal.user.toString() !== req.user.id) {
+      return res.status(401).json({
+        statusCode: 401,
+        msg: "You can not update a goal that is not yours!",
+      });
+    }
+
+    if (goal.isCompleted === true) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: `You can not update a goal that is completed!`,
+      });
+    }
+
+    if (goal.image_id !== null) {
+      await deleteImage(goal.image_id);
+
+      const updatedGoal = await Goal.findByIdAndUpdate(
+        id,
+        {
+          image: null,
+          image_id: null,
+        },
+        { new: true }
+      );
+
+      return res.status(200).json({
+        statusCode: 200,
+        msg: "Image deleted successfully!",
+        data: updatedGoal,
+      });
+    }
+
+    res.status(400).json({
+      statusCode: 400,
+      msg: "Goal does not have image to delete!",
+    });
+  } catch (error) {
+    console.log(error.message);
+    return next("Error trying to delete goal image");
+  }
+};
+
 module.exports = {
   getLowGoals,
   getMediumGoals,
@@ -555,4 +619,5 @@ module.exports = {
   updateGoalCompleted,
   getFilteredGoals,
   updateGoalImage,
+  deleteGoalImage,
 };
