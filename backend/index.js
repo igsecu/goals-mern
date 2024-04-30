@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 5000;
 const goalRouter = require("./routes/goalRoutes");
 const userRouter = require("./routes/userRoutes");
 const taskRouter = require("./routes/taskRoutes");
+const noteRouter = require("./routes/noteRoutes");
 
 const connectDB = require("./config/db");
 
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
 app.use("/api/goals", goalRouter);
 app.use("/api/users", userRouter);
 app.use("/api/tasks", taskRouter);
+app.use("/api/notes", noteRouter);
 
 // Error catching endware
 app.use((err, req, res, next) => {
