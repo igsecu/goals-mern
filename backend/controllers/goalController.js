@@ -4,6 +4,9 @@ const {
   validateTitle,
   validateDescription,
   validateUrgency,
+  validateTitleUpdate,
+  validateDescriptionUpdate,
+  isValidObjectId,
 } = require("../utils/goalsValidations");
 
 // Get goals
@@ -62,37 +65,74 @@ const createGoal = async (req, res, next) => {
 // Update goal
 const updateGoal = async (req, res, next) => {
   const { id } = req.params;
-  const { text } = req.body;
+  const { title, description } = req.body;
 
-  const goal = await Goal.findById(id);
-
-  if (!goal) {
-    return res.status(404).json({
-      msg: `Goal with ID: ${id} not found!`,
-    });
+  if (title) {
+    if (validateTitleUpdate(title)) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: validateTitleUpdate(title),
+      });
+    }
   }
 
-  if (!text) {
+  if (description) {
+    if (validateDescriptionUpdate(description)) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: validateDescriptionUpdate(description),
+      });
+    }
+  }
+
+  if (!title && !description) {
     return res.status(400).json({
-      msg: "Text is missing",
+      statusCode: 400,
+      msg: "Title or description missing",
     });
   }
 
-  // Goal is not logged in user
-  if (goal.user.toString() !== req.user.id) {
-    return res.status(401).json({
-      statusCode: 401,
-      msg: "You can not update a goal that is not yours!",
+  try {
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: `ID: ${id} - Invalid format!`,
+      });
+    }
+
+    const goal = await Goal.findById(id);
+
+    console.log(goal);
+
+    if (!goal) {
+      return res.status(404).json({
+        msg: `Goal with ID: ${id} not found!`,
+      });
+    }
+
+    // Goal is not logged in user
+    if (goal.user.toString() !== req.user.id) {
+      return res.status(401).json({
+        statusCode: 401,
+        msg: "You can not update a goal that is not yours!",
+      });
+    }
+
+    const updatedGoal = await Goal.findByIdAndUpdate(
+      id,
+      { title: title ?? title, description: description ?? description },
+      { new: true }
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      msg: "Goal updated successfully!",
+      data: updatedGoal,
     });
+  } catch (error) {
+    console.log(error.message);
+    return next("Error trying to update goal");
   }
-
-  const updatedGoal = await Goal.findByIdAndUpdate(id, { text }, { new: true });
-
-  res.status(200).json({
-    statusCode: 200,
-    msg: "Goal updated successfully!",
-    data: updatedGoal,
-  });
 };
 
 // Delete goal
