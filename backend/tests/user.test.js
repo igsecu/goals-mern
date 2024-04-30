@@ -318,21 +318,6 @@ describe("PUT /api/users/image route -> update user image", () => {
   }); */
 });
 
-describe("GET /api/goals route -> get goals", () => {
-  it("it should return 401 status code -> not authorized", async () => {
-    const response = await request(app).get("/api/goals");
-    expect(response.status).toBe(401);
-    expect(response.body.msg).toBe("You are not authorized! Please login...");
-  });
-  it("it should return 404 status code -> no goals", async () => {
-    const response = await request(app)
-      .get("/api/goals")
-      .set("Authorization", `Bearer ${token}`);
-    expect(response.status).toBe(404);
-    expect(response.body.msg).toBe("You do not have goals!");
-  });
-});
-
 let goal1_id, goal2_id, goal3_id;
 
 describe("POST /api/goals route -> create a new goal", () => {
@@ -442,7 +427,7 @@ describe("POST /api/goals route -> create a new goal", () => {
       .send({
         title: "Goal 2",
         description: "Description of Goal 2",
-        urgency: "medium",
+        urgency: "low",
       })
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(201);
@@ -459,6 +444,39 @@ describe("POST /api/goals route -> create a new goal", () => {
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(201);
     goal3_id = response.body.data._id;
+  });
+  it("it should return 201 status code -> goal created", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title: "Goal 4",
+        description: "Description of Goal 4",
+        urgency: "low",
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(201);
+  });
+  it("it should return 201 status code -> goal created", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title: "Goal 5",
+        description: "Description of Goal 5",
+        urgency: "low",
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(201);
+  });
+  it("it should return 201 status code -> goal created", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title: "Goal 6",
+        description: "Description of Goal 6",
+        urgency: "high",
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(201);
   });
 });
 
@@ -490,7 +508,7 @@ describe("PUT /api/goals/:id route -> update goal", () => {
       .send({})
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(400);
-    expect(response.body.msg).toBe("Title or description missing");
+    expect(response.body.msg).toBe("Title, description or urgency missing");
   });
   it("it should return 400 status code -> id invalid format", async () => {
     const response = await request(app)
@@ -517,134 +535,85 @@ describe("PUT /api/goals/:id route -> update goal", () => {
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(200);
   });
-});
-
-/* describe("GET /api/goals route -> get goals", () => {
-  it("it should return 200 status code -> no goals", async () => {
-    const response = await request(app)
-      .get("/api/goals")
-      .set("Authorization", `Bearer ${token}`);
-    expect(response.status).toBe(200);
-  });
-});
-
-describe("PUT /api/goals/:id route -> update goal", () => {
-  it("it should return 401 status code -> not authorized", async () => {
-    const response = await request(app).put(
-      "/api/goals/662828bd4ab4dedb76f3f4bd"
-    );
-    expect(response.status).toBe(401);
-    expect(response.body.msg).toBe("You are not authorized! Please login...");
-  });
-  it("it should return 200 status code -> login success", async () => {
-    const user = {
-      email: "user2@gmail.com",
-      password: "Password14!",
-    };
-    const response = await request(app).post("/api/users/login").send(user);
-    expect(response.status).toBe(200);
-    expect(response.body.msg).toBe("Login successfully!");
-    token = response.body.token;
-  });
-  it("it should return 404 status code -> goal not found", async () => {
-    const response = await request(app)
-      .put("/api/goals/662828bd4ab4dedb76f3f4bd")
-      .set("Authorization", `Bearer ${token}`);
-    expect(response.status).toBe(404);
-    expect(response.body.msg).toBe(
-      "Goal with ID: 662828bd4ab4dedb76f3f4bd not found!"
-    );
-  });
-  it("it should return 400 status code -> text is missing", async () => {
-    const response = await request(app)
-      .put("/api/goals/662833fc18a0798d39e075f5")
-      .set("Authorization", `Bearer ${token}`)
-      .send({});
-    expect(response.status).toBe(400);
-    expect(response.body.msg).toBe("Text is missing");
-  });
-  it("it should return 401 status code -> goal not yours", async () => {
-    const response = await request(app)
-      .put("/api/goals/662833fc18a0798d39e075f5")
-      .send({ text: "Goal Updated" })
-      .set("Authorization", `Bearer ${token}`);
-    expect(response.status).toBe(401);
-    expect(response.body.msg).toBe(
-      "You can not update a goal that is not yours!"
-    );
-  });
-  it("it should return 200 status code -> login success", async () => {
-    const user = {
-      email: "user1@gmail.com",
-      password: "Password14!",
-    };
-    const response = await request(app).post("/api/users/login").send(user);
-    expect(response.status).toBe(200);
-    expect(response.body.msg).toBe("Login successfully!");
-    token = response.body.token;
-  });
   it("it should return 200 status code -> goal updated", async () => {
     const response = await request(app)
-      .put("/api/goals/662833fc18a0798d39e075f5")
-      .send({ text: "Goal Updated" })
+      .put(`/api/goals/${goal2_id}?urgency=medium`)
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(200);
-    expect(response.body.msg).toBe("Goal updated successfully!");
   });
 });
 
 describe("DELETE /api/goals/:id route -> delete goal", () => {
   it("it should return 401 status code -> not authorized", async () => {
-    const response = await request(app).delete(
-      "/api/goals/66283039e1a333ca9758ec78"
-    );
+    const response = await request(app).delete("/api/goals/1");
     expect(response.status).toBe(401);
     expect(response.body.msg).toBe("You are not authorized! Please login...");
   });
-  it("it should return 200 status code -> login success", async () => {
-    const user = {
-      email: "user2@gmail.com",
-      password: "Password14!",
-    };
-    const response = await request(app).post("/api/users/login").send(user);
-    expect(response.status).toBe(200);
-    expect(response.body.msg).toBe("Login successfully!");
-    token = response.body.token;
+  it("it should return 400 status code -> id invalid format", async () => {
+    const response = await request(app)
+      .delete("/api/goals/1")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("ID: 1 - Invalid format!");
   });
   it("it should return 404 status code -> goal not found", async () => {
     const response = await request(app)
-      .delete("/api/goals/66283039e1a333ca9758ec78")
+      .delete("/api/goals/6631441c909472edf6522a18")
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(404);
     expect(response.body.msg).toBe(
-      "Goal with ID: 66283039e1a333ca9758ec78 not found!"
+      "Goal with ID: 6631441c909472edf6522a18 not found!"
     );
-  });
-  it("it should return 401 status code -> goal not yours", async () => {
-    const response = await request(app)
-      .delete("/api/goals/662834f01a81f374e51a23dc")
-      .set("Authorization", `Bearer ${token}`);
-    expect(response.status).toBe(401);
-    expect(response.body.msg).toBe(
-      "You can not delete a goal that is not yours!"
-    );
-  });
-  it("it should return 200 status code -> login success", async () => {
-    const user = {
-      email: "user1@gmail.com",
-      password: "Password14!",
-    };
-    const response = await request(app).post("/api/users/login").send(user);
-    expect(response.status).toBe(200);
-    expect(response.body.msg).toBe("Login successfully!");
-    token = response.body.token;
   });
   it("it should return 200 status code -> goal deleted", async () => {
     const response = await request(app)
       .delete(`/api/goals/${goal1_id}`)
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(200);
-    expect(response.body.msg).toBe("Goal deleted!");
   });
 });
- */
+
+describe("GET /api/goals/urgency/low route -> get low urgency goals", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).get("/api/goals/urgency/low");
+
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 200 status code -> get goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/urgency/low")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
+
+describe("GET /api/goals/urgency/medium route -> get medium urgency goals", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).get("/api/goals/urgency/medium");
+
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 200 status code -> get goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/urgency/medium")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
+
+describe("GET /api/goals/urgency/high route -> get medium urgency goals", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).get("/api/goals/urgency/high");
+
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 200 status code -> get goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/urgency/high")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
