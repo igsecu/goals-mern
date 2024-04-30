@@ -24,6 +24,14 @@ const goalSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    tasks: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
+      default: [],
+    },
+    notes: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Note" }],
+      default: [],
+    },
   },
   {
     timestamps: true,
