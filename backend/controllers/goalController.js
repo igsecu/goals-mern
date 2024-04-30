@@ -215,6 +215,53 @@ const updateGoal = async (req, res, next) => {
   }
 };
 
+// Update goal completed
+const updateGoalCompleted = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: `ID: ${id} - Invalid format!`,
+      });
+    }
+
+    const goal = await Goal.findById(id);
+
+    if (!goal) {
+      return res.status(404).json({
+        msg: `Goal with ID: ${id} not found!`,
+      });
+    }
+
+    // Goal is not logged in user
+    if (goal.user.toString() !== req.user.id) {
+      return res.status(401).json({
+        statusCode: 401,
+        msg: "You can not update a goal that is not yours!",
+      });
+    }
+
+    const updatedGoal = await Goal.findByIdAndUpdate(
+      id,
+      {
+        isCompleted: true,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      msg: `You completed the Goal: ${updatedGoal.title}`,
+      data: updatedGoal,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return next("Error trying to update goal");
+  }
+};
+
 // Delete goal
 const deleteGoal = async (req, res, next) => {
   const { id } = req.params;
@@ -264,4 +311,5 @@ module.exports = {
   updateGoal,
   deleteGoal,
   getCompletedGoals,
+  updateGoalCompleted,
 };
