@@ -10,10 +10,13 @@ const {
   deleteGoal,
   getCompletedGoals,
   updateGoalCompleted,
+  getFilteredGoals,
 } = require("../controllers/goalController");
 
 const { protect } = require("../middleware/authMiddleware");
 
+// Get filtered goals
+router.get("/filter", protect, getFilteredGoals);
 // Get completed goals
 router.get("/completed", protect, getCompletedGoals);
 // Get high urgency goals
