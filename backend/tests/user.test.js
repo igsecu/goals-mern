@@ -318,7 +318,7 @@ describe("PUT /api/users/image route -> update user image", () => {
   }); */
 });
 
-let goal1_id, goal2_id, goal3_id;
+let goal1_id, goal2_id, goal3_id, goal4_id;
 
 describe("POST /api/goals route -> create a new goal", () => {
   it("it should return 401 status code -> not authorized", async () => {
@@ -455,6 +455,7 @@ describe("POST /api/goals route -> create a new goal", () => {
       })
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(201);
+    goal4_id = response.body.data._id;
   });
   it("it should return 201 status code -> goal created", async () => {
     const response = await request(app)
@@ -839,6 +840,252 @@ describe("PUT /api/goals/:id/completed route -> update goal completed", () => {
     const response = await request(app)
       .put(`/api/goals/${goal3_id}/completed`)
       .send({ title: "Title updated!" })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
+
+let newTask_id;
+
+describe("POST /api/task route -> create new task", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).post("/api/tasks");
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 400 status code -> text is missing", async () => {
+    const response = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Text is missing");
+  });
+  it("it should return 400 status code -> text must be a string", async () => {
+    const response = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: 1234 });
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Text must be a string");
+  });
+  it("it should return 400 status code -> goalId is missing", async () => {
+    const response = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Task 1" });
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("goalId is missing");
+  });
+  it("it should return 400 status code -> goalId invalid format", async () => {
+    const response = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Task 1", goalId: 1 });
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("goalId: 1 - Invalid format!");
+  });
+  it("it should return 404 status code -> goal not found", async () => {
+    const response = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Task 1", goalId: "66314f999626130dd8ec339e" });
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe(
+      "Goal with ID: 66314f999626130dd8ec339e not found!"
+    );
+  });
+  it("it should return 201 status code -> task created", async () => {
+    const response = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Task 1", goalId: goal4_id });
+    expect(response.status).toBe(201);
+  });
+  it("it should return 201 status code -> task created", async () => {
+    const response = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Task 2", goalId: goal4_id });
+    expect(response.status).toBe(201);
+    newTask_id = response.body.data._id;
+  });
+  it("it should return 201 status code -> task created", async () => {
+    const response = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Task 3", goalId: goal4_id });
+    expect(response.status).toBe(201);
+  });
+});
+
+describe("GET /api/goals/urgency/low route -> get low urgency goals", () => {
+  it("it should return 200 status code -> get goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/urgency/low")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
+
+describe("DELETE /api/tasks/:id route -> delete task", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).delete("/api/tasks/1");
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 400 status code -> id invalid format", async () => {
+    const response = await request(app)
+      .delete("/api/tasks/1")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("ID: 1 - Invalid format!");
+  });
+  it("it should return 404 status code -> task not found", async () => {
+    const response = await request(app)
+      .delete("/api/tasks/6631441c909472edf6522a18")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe(
+      "Task with ID: 6631441c909472edf6522a18 not found!"
+    );
+  });
+  it("it should return 200 status code -> task deleted", async () => {
+    const response = await request(app)
+      .delete(`/api/tasks/${newTask_id}`)
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
+
+describe("GET /api/goals/urgency/low route -> get low urgency goals", () => {
+  it("it should return 200 status code -> get goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/urgency/low")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
+
+let note1_id, note2_id, note3_id;
+
+describe("POST /api/task route -> create new note", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).post("/api/notes");
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 400 status code -> text is missing", async () => {
+    const response = await request(app)
+      .post("/api/notes")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Text is missing");
+  });
+  it("it should return 400 status code -> text must be a string", async () => {
+    const response = await request(app)
+      .post("/api/notes")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: 1234 });
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Text must be a string");
+  });
+  it("it should return 400 status code -> goalId is missing", async () => {
+    const response = await request(app)
+      .post("/api/notes")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Task 1" });
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("goalId is missing");
+  });
+  it("it should return 400 status code -> goalId invalid format", async () => {
+    const response = await request(app)
+      .post("/api/notes")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Task 1", goalId: 1 });
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("goalId: 1 - Invalid format!");
+  });
+  it("it should return 404 status code -> goal not found", async () => {
+    const response = await request(app)
+      .post("/api/notes")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Task 1", goalId: "66314f999626130dd8ec339e" });
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe(
+      "Goal with ID: 66314f999626130dd8ec339e not found!"
+    );
+  });
+  it("it should return 201 status code -> note created", async () => {
+    const response = await request(app)
+      .post("/api/notes")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Note 1", goalId: goal4_id });
+    expect(response.status).toBe(201);
+    note1_id = response.body.data._id;
+  });
+  it("it should return 201 status code -> note created", async () => {
+    const response = await request(app)
+      .post("/api/notes")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Note 2", goalId: goal4_id });
+    expect(response.status).toBe(201);
+    note2_id = response.body.data._id;
+  });
+  it("it should return 201 status code -> note created", async () => {
+    const response = await request(app)
+      .post("/api/notes")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ text: "Note 3", goalId: goal4_id });
+    expect(response.status).toBe(201);
+    note3_id = response.body.data._id;
+  });
+});
+
+describe("GET /api/goals/urgency/low route -> get low urgency goals", () => {
+  it("it should return 200 status code -> get goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/urgency/low")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
+
+describe("DELETE /api/notes/:id route -> delete note", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).delete("/api/notes/1");
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 400 status code -> id invalid format", async () => {
+    const response = await request(app)
+      .delete("/api/notes/1")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("ID: 1 - Invalid format!");
+  });
+  it("it should return 404 status code -> note not found", async () => {
+    const response = await request(app)
+      .delete("/api/notes/6631441c909472edf6522a18")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe(
+      "Note with ID: 6631441c909472edf6522a18 not found!"
+    );
+  });
+  it("it should return 200 status code -> note deleted", async () => {
+    const response = await request(app)
+      .delete(`/api/notes/${note2_id}`)
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
+
+describe("GET /api/goals/urgency/low route -> get low urgency goals", () => {
+  it("it should return 200 status code -> get goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/urgency/low")
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(200);
   });
