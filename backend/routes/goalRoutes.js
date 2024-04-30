@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const fileUpload = require("express-fileupload");
+
 const {
   getLowGoals,
   getMediumGoals,
@@ -11,6 +13,7 @@ const {
   getCompletedGoals,
   updateGoalCompleted,
   getFilteredGoals,
+  updateGoalImage,
 } = require("../controllers/goalController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -27,6 +30,16 @@ router.get("/urgency/medium", protect, getMediumGoals);
 router.get("/urgency/low", protect, getLowGoals);
 // Create new goal
 router.post("/", protect, createGoal);
+// Update user image
+router.put(
+  "/:id/image",
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: `${__dirname}/../uploads`,
+  }),
+  protect,
+  updateGoalImage
+);
 // Update goal completed
 router.put("/:id/completed", protect, updateGoalCompleted);
 // Update goal
