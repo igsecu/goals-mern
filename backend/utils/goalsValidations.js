@@ -44,6 +44,19 @@ const validateDescriptionUpdate = (description) => {
   return false;
 };
 
+// Validate urgency update
+const validateUrgencyUpdate = (urgency) => {
+  if (typeof urgency !== "string") return "Urgency must be a string";
+  if (
+    urgency.toUpperCase() !== "LOW" &&
+    urgency.toUpperCase() !== "MEDIUM" &&
+    urgency.toUpperCase() !== "HIGH"
+  ) {
+    return "Urgency must be LOW, MEDIUM or HIGH";
+  }
+  return false;
+};
+
 function isValidObjectId(id) {
   // ObjectID consists of 24 hexadecimal characters (0-9, a-f)
   const objectIdRegex = /^[0-9a-fA-F]{24}$/;
@@ -56,5 +69,6 @@ module.exports = {
   validateUrgency,
   validateTitleUpdate,
   validateDescriptionUpdate,
+  validateUrgencyUpdate,
   isValidObjectId,
 };
