@@ -32,6 +32,14 @@ const goalSchema = mongoose.Schema(
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Note" }],
       default: [],
     },
+    image: {
+      type: String,
+      default: null,
+    },
+    image_id: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
