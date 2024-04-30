@@ -2,6 +2,8 @@ const Goal = require("../models/goalModel");
 const Task = require("../models/taskModel");
 const Note = require("../models/noteModel");
 
+const fsExtra = require("fs-extra");
+
 const {
   validateTitle,
   validateDescription,
@@ -11,6 +13,10 @@ const {
   validateUrgencyUpdate,
   isValidObjectId,
 } = require("../utils/goalsValidations");
+
+const { validateImageSize, validateFileType } = require("../utils/index");
+
+const { uploadGoalImage, deleteImage } = require("../utils/cloudinary");
 
 // Get low goals
 const getLowGoals = async (req, res, next) => {
@@ -38,7 +44,8 @@ const getLowGoals = async (req, res, next) => {
             createdAt: 1,
           },
         },
-      });
+      })
+      .select("-image_id -updatedAt");
     if (!goals.length) {
       return res.status(404).json({
         statusCode: 404,
@@ -77,7 +84,8 @@ const getMediumGoals = async (req, res, next) => {
             createdAt: 1,
           },
         },
-      });
+      })
+      .select("-image_id -updatedAt");
     if (!goals.length) {
       return res.status(404).json({
         statusCode: 404,
@@ -116,7 +124,8 @@ const getHighGoals = async (req, res, next) => {
             createdAt: 1,
           },
         },
-      });
+      })
+      .select("-image_id -updatedAt");
     if (!goals.length) {
       return res.status(404).json({
         statusCode: 404,
@@ -154,7 +163,8 @@ const getCompletedGoals = async (req, res, next) => {
             createdAt: 1,
           },
         },
-      });
+      })
+      .select("-image_id -updatedAt");
     if (!goals.length) {
       return res.status(404).json({
         statusCode: 404,
@@ -260,6 +270,7 @@ const updateGoal = async (req, res, next) => {
 
     if (!goal) {
       return res.status(404).json({
+        statusCode: 404,
         msg: `Goal with ID: ${id} not found!`,
       });
     }
@@ -269,6 +280,13 @@ const updateGoal = async (req, res, next) => {
       return res.status(401).json({
         statusCode: 401,
         msg: "You can not update a goal that is not yours!",
+      });
+    }
+
+    if (goal.isCompleted === true) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: `You can not update a goal that is completed!`,
       });
     }
 
@@ -309,6 +327,7 @@ const updateGoalCompleted = async (req, res, next) => {
 
     if (!goal) {
       return res.status(404).json({
+        statusCode: 404,
         msg: `Goal with ID: ${id} not found!`,
       });
     }
@@ -430,6 +449,101 @@ const getFilteredGoals = async (req, res, next) => {
   }
 };
 
+// Update goal image
+const updateGoalImage = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: `ID: ${id} - Invalid format!`,
+      });
+    }
+
+    const goal = await Goal.findById(id);
+
+    if (!goal) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: `Goal with ID: ${id} not found!`,
+      });
+    }
+
+    // Goal is not logged in user
+    if (goal.user.toString() !== req.user.id) {
+      return res.status(401).json({
+        statusCode: 401,
+        msg: "You can not update a goal that is not yours!",
+      });
+    }
+
+    if (goal.isCompleted === true) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: `You can not update a goal that is completed!`,
+      });
+    }
+
+    if (req.files?.image) {
+      if (await validateFileType(req.files.image.tempFilePath)) {
+        const message = await validateFileType(req.files.image.tempFilePath);
+
+        await fsExtra.unlink(req.files.image.tempFilePath);
+
+        return res.status(400).json({
+          statusCode: 400,
+          msg: message,
+        });
+      }
+
+      if (await validateImageSize(req.files.image.tempFilePath)) {
+        const message = await validateImageSize(req.files.image.tempFilePath);
+
+        await fsExtra.unlink(req.files.image.tempFilePath);
+
+        return res.status(400).json({
+          statusCode: 400,
+          msg: message,
+        });
+      }
+
+      const result = await uploadGoalImage(req.files.image.tempFilePath);
+
+      await fsExtra.unlink(req.files.image.tempFilePath);
+
+      if (goal.image_id !== null) {
+        await deleteImage(goal.image_id);
+      }
+
+      const goalUpdated = await Goal.findByIdAndUpdate(
+        id,
+        {
+          image: result.secure_url,
+          image_id: result.public_id,
+        },
+        { new: true }
+      );
+
+      const goalFound = await Goal.findById(id).select("-image_id");
+
+      return res.status(200).json({
+        statusCode: 200,
+        msg: "Image updated successfully!",
+        data: goalFound,
+      });
+    } else {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: "Image file is missing!",
+      });
+    }
+  } catch (error) {
+    await fsExtra.unlink(req.files.image.tempFilePath);
+    console.log(error.message);
+    return next("Error trying to update goal image");
+  }
+};
+
 module.exports = {
   getLowGoals,
   getMediumGoals,
@@ -440,4 +554,5 @@ module.exports = {
   getCompletedGoals,
   updateGoalCompleted,
   getFilteredGoals,
+  updateGoalImage,
 };
