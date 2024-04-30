@@ -98,6 +98,22 @@ const updateTaskProgress = async (req, res, next) => {
       });
     }
 
+    if (task.status === "COMPLETED") {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: "You can not update a task that is completed!",
+      });
+    }
+
+    const goal = await Goal.findById(task.goal);
+
+    if (goal.isCompleted === true) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: "You can not update a task of a goal that is completed!",
+      });
+    }
+
     const updateTask = await Task.findByIdAndUpdate(
       id,
       {
@@ -144,6 +160,15 @@ const updateTaskCompleted = async (req, res, next) => {
       });
     }
 
+    const goal = await Goal.findById(task.goal);
+
+    if (goal.isCompleted === true) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: "You can not update a task of a goal that is completed!",
+      });
+    }
+
     const updateTask = await Task.findByIdAndUpdate(
       id,
       {
@@ -180,4 +205,59 @@ const updateTaskCompleted = async (req, res, next) => {
   }
 };
 
-module.exports = { createTask, updateTaskProgress, updateTaskCompleted };
+// Delete Task
+const deleteTask = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: `ID: ${id} - Invalid format!`,
+      });
+    }
+
+    const task = await Task.findById(id);
+
+    if (!task) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: `Task with ID: ${id} not found!`,
+      });
+    }
+
+    // Goal is not logged in user
+    if (task.user.toString() !== req.user.id) {
+      return res.status(401).json({
+        statusCode: 401,
+        msg: "You can not delete a task that is not yours!",
+      });
+    }
+
+    const goal = await Goal.findById(task.goal);
+
+    if (goal.isCompleted === true) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: "You can not delete a task of a goal that is completed!",
+      });
+    }
+
+    const taskDeleted = await task.deleteOne();
+
+    if (taskDeleted.deletedCount === 1) {
+      res
+        .status(200)
+        .json({ statusCode: 200, msg: "Task deleted!", data: task });
+    }
+  } catch (error) {
+    return next("Error trying to delete a task");
+  }
+};
+
+module.exports = {
+  createTask,
+  updateTaskProgress,
+  updateTaskCompleted,
+  deleteTask,
+};
