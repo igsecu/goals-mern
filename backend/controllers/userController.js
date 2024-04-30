@@ -13,7 +13,7 @@ const {
   validateFileType,
 } = require("../utils/index");
 
-const { uploadUserImage } = require("../utils/cloudinary");
+const { uploadUserImage, deleteImage } = require("../utils/cloudinary");
 
 // Register User
 const registerUser = async (req, res, next) => {
@@ -187,6 +187,10 @@ const updateUserImage = async (req, res, next) => {
       const result = await uploadUserImage(req.files.image.tempFilePath);
 
       await fsExtra.unlink(req.files.image.tempFilePath);
+
+      if (user.image_id !== null) {
+        await deleteImage(user.image_id);
+      }
 
       const userUpdated = await User.findByIdAndUpdate(
         req.user.id,
