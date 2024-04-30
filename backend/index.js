@@ -4,6 +4,7 @@ require("dotenv").config();
 const PORT = process.env.PORT || 5000;
 const goalRouter = require("./routes/goalRoutes");
 const userRouter = require("./routes/userRoutes");
+const taskRouter = require("./routes/taskRoutes");
 
 const connectDB = require("./config/db");
 
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 // Router middleware
 app.use("/api/goals", goalRouter);
 app.use("/api/users", userRouter);
+app.use("/api/tasks", taskRouter);
 
 // Error catching endware
 app.use((err, req, res, next) => {
