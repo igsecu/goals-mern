@@ -7,6 +7,7 @@ const {
   createTask,
   updateTaskCompleted,
   updateTaskProgress,
+  deleteTask,
 } = require("../controllers/taskController");
 
 // Create task
@@ -15,5 +16,7 @@ router.post("/", protect, createTask);
 router.put("/:id/status/progress", protect, updateTaskProgress);
 // Update task completed
 router.put("/:id/status/completed", protect, updateTaskCompleted);
+// Delete task
+router.delete("/:id", protect, deleteTask);
 
 module.exports = router;
