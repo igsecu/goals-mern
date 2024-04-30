@@ -17,7 +17,26 @@ const getLowGoals = async (req, res, next) => {
       user: req.user.id,
       urgency: "LOW",
       isCompleted: false,
-    }).sort("-createdAt");
+    })
+      .sort("-createdAt")
+      .populate({
+        path: "tasks",
+        options: {
+          select: "id text status",
+          sort: {
+            createdAt: -1,
+          },
+        },
+      })
+      .populate({
+        path: "notes",
+        options: {
+          select: "id text",
+          sort: {
+            createdAt: 1,
+          },
+        },
+      });
     if (!goals.length) {
       return res.status(404).json({
         statusCode: 404,
@@ -37,7 +56,26 @@ const getMediumGoals = async (req, res, next) => {
       user: req.user.id,
       urgency: "MEDIUM",
       isCompleted: false,
-    }).sort("-createdAt");
+    })
+      .sort("-createdAt")
+      .populate({
+        path: "tasks",
+        options: {
+          select: "id text status",
+          sort: {
+            createdAt: -1,
+          },
+        },
+      })
+      .populate({
+        path: "notes",
+        options: {
+          select: "id text",
+          sort: {
+            createdAt: 1,
+          },
+        },
+      });
     if (!goals.length) {
       return res.status(404).json({
         statusCode: 404,
@@ -57,7 +95,26 @@ const getHighGoals = async (req, res, next) => {
       user: req.user.id,
       urgency: "HIGH",
       isCompleted: false,
-    }).sort("-createdAt");
+    })
+      .sort("-createdAt")
+      .populate({
+        path: "tasks",
+        options: {
+          select: "id text status",
+          sort: {
+            createdAt: -1,
+          },
+        },
+      })
+      .populate({
+        path: "notes",
+        options: {
+          select: "id text",
+          sort: {
+            createdAt: 1,
+          },
+        },
+      });
     if (!goals.length) {
       return res.status(404).json({
         statusCode: 404,
@@ -76,7 +133,26 @@ const getCompletedGoals = async (req, res, next) => {
     const goals = await Goal.find({
       user: req.user.id,
       isCompleted: true,
-    }).sort("-createdAt");
+    })
+      .sort("-createdAt")
+      .populate({
+        path: "tasks",
+        options: {
+          select: "id text status",
+          sort: {
+            createdAt: -1,
+          },
+        },
+      })
+      .populate({
+        path: "notes",
+        options: {
+          select: "id text",
+          sort: {
+            createdAt: 1,
+          },
+        },
+      });
     if (!goals.length) {
       return res.status(404).json({
         statusCode: 404,
