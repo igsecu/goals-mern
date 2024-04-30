@@ -14,6 +14,7 @@ const {
   updateGoalCompleted,
   getFilteredGoals,
   updateGoalImage,
+  deleteGoalImage,
 } = require("../controllers/goalController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -44,6 +45,8 @@ router.put(
 router.put("/:id/completed", protect, updateGoalCompleted);
 // Update goal
 router.put("/:id", protect, updateGoal);
+// Delete goal image
+router.delete("/:id/image", protect, deleteGoalImage);
 // Delete goal
 router.delete("/:id", protect, deleteGoal);
 
