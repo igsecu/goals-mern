@@ -8,9 +8,21 @@ const goalSchema = mongoose.Schema(
       required: true,
       ref: "User",
     },
-    text: {
+    title: {
       type: String,
       required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    urgency: {
+      type: String,
+      require: true,
+    },
+    isCompleted: {
+      type: Boolean,
+      default: false,
     },
   },
   {
