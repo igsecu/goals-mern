@@ -1,4 +1,6 @@
 const Goal = require("../models/goalModel");
+const Task = require("../models/taskModel");
+const Note = require("../models/noteModel");
 
 const {
   validateTitle,
@@ -370,12 +372,61 @@ const deleteGoal = async (req, res, next) => {
     const goalDeleted = await goal.deleteOne();
 
     if (goalDeleted.deletedCount === 1) {
+      await Task.deleteMany({ goal: id });
+      await Note.deleteMany({ goal: id });
       res
         .status(200)
         .json({ statusCode: 200, msg: "Goal deleted!", data: goal });
     }
   } catch (error) {
     return next("Error trying to delete a goal");
+  }
+};
+
+// Get filtered goals
+const getFilteredGoals = async (req, res, next) => {
+  const { title } = req.query;
+
+  if (!title) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: "Query parameter is missing",
+    });
+  }
+
+  try {
+    const goals = await Goal.find({
+      user: req.user.id,
+      title: new RegExp(title, "i"),
+    })
+      .sort("-createdAt")
+      .populate({
+        path: "tasks",
+        options: {
+          select: "id text status",
+          sort: {
+            createdAt: -1,
+          },
+        },
+      })
+      .populate({
+        path: "notes",
+        options: {
+          select: "id text",
+          sort: {
+            createdAt: 1,
+          },
+        },
+      });
+    if (!goals.length) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: "Goals with these filters not found!",
+      });
+    }
+    res.status(200).json({ statusCode: 200, data: goals });
+  } catch (error) {
+    return next("Error trying to get filtered goals");
   }
 };
 
@@ -388,4 +439,5 @@ module.exports = {
   deleteGoal,
   getCompletedGoals,
   updateGoalCompleted,
+  getFilteredGoals,
 };
