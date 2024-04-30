@@ -10,16 +10,64 @@ const {
   isValidObjectId,
 } = require("../utils/goalsValidations");
 
-// Get goals
-const getGoals = async (req, res, next) => {
-  const goals = await Goal.find({ user: req.user.id });
-  if (!goals.length) {
-    return res.status(404).json({
-      statusCode: 404,
-      msg: "You do not have goals!",
-    });
+// Get low goals
+const getLowGoals = async (req, res, next) => {
+  try {
+    const goals = await Goal.find({
+      user: req.user.id,
+      urgency: "LOW",
+      isCompleted: false,
+    }).sort("-createdAt");
+    if (!goals.length) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: "You do not have low urgency goals!",
+      });
+    }
+    res.status(200).json({ statusCode: 200, data: goals });
+  } catch (error) {
+    return next("Error trying to get low urgency goals");
   }
-  res.status(200).json({ statusCode: 200, data: goals });
+};
+
+// Get medium goals
+const getMediumGoals = async (req, res, next) => {
+  try {
+    const goals = await Goal.find({
+      user: req.user.id,
+      urgency: "MEDIUM",
+      isCompleted: false,
+    }).sort("-createdAt");
+    if (!goals.length) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: "You do not have medium urgency goals!",
+      });
+    }
+    res.status(200).json({ statusCode: 200, data: goals });
+  } catch (error) {
+    return next("Error trying to get medium urgency goals");
+  }
+};
+
+// Get high goals
+const getHighGoals = async (req, res, next) => {
+  try {
+    const goals = await Goal.find({
+      user: req.user.id,
+      urgency: "HIGH",
+      isCompleted: false,
+    }).sort("-createdAt");
+    if (!goals.length) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: "You do not have high urgency goals!",
+      });
+    }
+    res.status(200).json({ statusCode: 200, data: goals });
+  } catch (error) {
+    return next("Error trying to get high urgency goals");
+  }
 };
 
 // Create goal
@@ -190,7 +238,9 @@ const deleteGoal = async (req, res, next) => {
 };
 
 module.exports = {
-  getGoals,
+  getLowGoals,
+  getMediumGoals,
+  getHighGoals,
   createGoal,
   updateGoal,
   deleteGoal,
