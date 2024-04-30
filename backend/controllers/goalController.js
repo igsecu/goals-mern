@@ -70,6 +70,25 @@ const getHighGoals = async (req, res, next) => {
   }
 };
 
+// Get completed goals
+const getCompletedGoals = async (req, res, next) => {
+  try {
+    const goals = await Goal.find({
+      user: req.user.id,
+      isCompleted: true,
+    }).sort("-createdAt");
+    if (!goals.length) {
+      return res.status(404).json({
+        statusCode: 404,
+        msg: "You do not have completed goals!",
+      });
+    }
+    res.status(200).json({ statusCode: 200, data: goals });
+  } catch (error) {
+    return next("Error trying to get completed goals");
+  }
+};
+
 // Create goal
 const createGoal = async (req, res, next) => {
   const { title, description, urgency } = req.body;
@@ -244,4 +263,5 @@ module.exports = {
   createGoal,
   updateGoal,
   deleteGoal,
+  getCompletedGoals,
 };
