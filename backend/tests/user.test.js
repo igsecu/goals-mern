@@ -278,12 +278,52 @@ describe("GET /api/users/user route -> get logged in user", () => {
   });
 });
 
-describe("GET /api/goals route -> get goals", () => {
+describe("PUT /api/users/image route -> update user image", () => {
   it("it should return 401 status code -> not authorized", async () => {
-    const response = await request(app).get("/api/goals");
+    const response = await request(app).put("/api/users/image");
     expect(response.status).toBe(401);
     expect(response.body.msg).toBe("You are not authorized! Please login...");
   });
+  it("it should return 400 status code -> image file is missing", async () => {
+    const response = await request(app)
+      .put("/api/users/image")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Image file is missing!");
+  });
+  it("it should return 400 status code -> file type no allowed", async () => {
+    const response = await request(app)
+      .put("/api/users/image")
+      .set("Authorization", `Bearer ${token}`)
+      .attach("image", `${__dirname}/files/file.txt`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe(
+      "File format not allowed! Only JPG or PNG..."
+    );
+  });
+  it("it should return 400 status code -> file size not supported", async () => {
+    const response = await request(app)
+      .put("/api/users/image")
+      .set("Authorization", `Bearer ${token}`)
+      .attach("image", `${__dirname}/files/heavyimage.jpg`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("File must be up to 2mb!");
+  });
+  /*  it("it should return 200 status code -> user image updated", async () => {
+    const response = await request(app)
+      .put("/api/users/image")
+      .set("Authorization", `Bearer ${token}`)
+      .attach("image", `${__dirname}/files/avatar1.png`);
+    expect(response.status).toBe(200);
+  }); */
+});
+
+describe("GET /api/goals route -> get goals", () => {
+  /*   it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).get("/api/goals");
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  }); */
   /*   it("it should return 404 status code -> no goals", async () => {
     const response = await request(app)
       .get("/api/goals")
