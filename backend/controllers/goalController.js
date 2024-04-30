@@ -6,6 +6,7 @@ const {
   validateUrgency,
   validateTitleUpdate,
   validateDescriptionUpdate,
+  validateUrgencyUpdate,
   isValidObjectId,
 } = require("../utils/goalsValidations");
 
@@ -66,6 +67,7 @@ const createGoal = async (req, res, next) => {
 const updateGoal = async (req, res, next) => {
   const { id } = req.params;
   const { title, description } = req.body;
+  const { urgency } = req.query;
 
   if (title) {
     if (validateTitleUpdate(title)) {
@@ -85,10 +87,19 @@ const updateGoal = async (req, res, next) => {
     }
   }
 
-  if (!title && !description) {
+  if (urgency) {
+    if (validateUrgencyUpdate(urgency)) {
+      return res.status(400).json({
+        statusCode: 400,
+        msg: validateUrgencyUpdate(urgency),
+      });
+    }
+  }
+
+  if (!title && !description && !urgency) {
     return res.status(400).json({
       statusCode: 400,
-      msg: "Title or description missing",
+      msg: "Title, description or urgency missing",
     });
   }
 
@@ -101,8 +112,6 @@ const updateGoal = async (req, res, next) => {
     }
 
     const goal = await Goal.findById(id);
-
-    console.log(goal);
 
     if (!goal) {
       return res.status(404).json({
@@ -120,7 +129,11 @@ const updateGoal = async (req, res, next) => {
 
     const updatedGoal = await Goal.findByIdAndUpdate(
       id,
-      { title: title ?? title, description: description ?? description },
+      {
+        title: title ?? title,
+        description: description ?? description,
+        urgency: urgency && urgency.toUpperCase(),
+      },
       { new: true }
     );
 
