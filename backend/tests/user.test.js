@@ -1090,3 +1090,53 @@ describe("GET /api/goals/urgency/low route -> get low urgency goals", () => {
     expect(response.status).toBe(200);
   });
 });
+
+describe("DELETE /api/goals/:id route -> delete goal", () => {
+  it("it should return 200 status code -> goal deleted", async () => {
+    const response = await request(app)
+      .delete(`/api/goals/${goal4_id}`)
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
+
+describe("GET /api/goals/filter route -> get filtered goals", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).get("/api/goals/filter");
+
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 400 status code -> query parameter is missing", async () => {
+    const response = await request(app)
+      .get("/api/goals/filter")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Query parameter is missing");
+  });
+  it("it should return 200 status code -> get goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/filter?title=goal")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+  it("it should return 200 status code -> get goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/filter?title=goal 2")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+  it("it should return 200 status code -> get goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/filter?title=al")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+  it("it should return 404 status code -> no goals", async () => {
+    const response = await request(app)
+      .get("/api/goals/filter?title=goal 8")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe("Goals with these filters not found!");
+  });
+});
