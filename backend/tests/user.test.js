@@ -319,46 +319,205 @@ describe("PUT /api/users/image route -> update user image", () => {
 });
 
 describe("GET /api/goals route -> get goals", () => {
-  /*   it("it should return 401 status code -> not authorized", async () => {
+  it("it should return 401 status code -> not authorized", async () => {
     const response = await request(app).get("/api/goals");
     expect(response.status).toBe(401);
     expect(response.body.msg).toBe("You are not authorized! Please login...");
-  }); */
-  /*   it("it should return 404 status code -> no goals", async () => {
+  });
+  it("it should return 404 status code -> no goals", async () => {
     const response = await request(app)
       .get("/api/goals")
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(404);
     expect(response.body.msg).toBe("You do not have goals!");
-  }); */
+  });
 });
 
-let goal1_id;
+let goal1_id, goal2_id, goal3_id;
 
-/* describe("POST /api/goals route -> create a new goal", () => {
+describe("POST /api/goals route -> create a new goal", () => {
   it("it should return 401 status code -> not authorized", async () => {
     const response = await request(app).post("/api/goals");
     expect(response.status).toBe(401);
     expect(response.body.msg).toBe("You are not authorized! Please login...");
   });
-  it("it should return 400 status code -> text is missing", async () => {
+  it("it should return 400 status code -> title is missing", async () => {
     const response = await request(app)
       .post("/api/goals")
       .send({})
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(400);
-    expect(response.body.msg).toBe("Text is missing");
+    expect(response.body.msg).toBe("Title is missing");
+  });
+  it("it should return 400 status code -> title must be a string", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({ title: 1234 })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Title must be a string");
+  });
+  it("it should return 400 status code -> title 30 characters", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title:
+          "fdsflds;jfa;ldsjfsdl;fjds;afjdsl;afjdls;afjd;lsajfd;sajf;dsfjds;l",
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Title must be 30 characters or less");
+  });
+  it("it should return 400 status code -> description is missing", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title: "Title 1",
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Description is missing");
+  });
+  it("it should return 400 status code -> description must be a string", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title: "Title 1",
+        description: 1234,
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Description must be a string");
+  });
+  it("it should return 400 status code -> urgency is missing", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title: "Goal 1",
+        description: "Description of Goal 1",
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Urgency is missing");
+  });
+  it("it should return 400 status code -> urgency must be a string", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title: "Goal 1",
+        description: "Description of Goal 1",
+        urgency: 1234,
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Urgency must be a string");
+  });
+  it("it should return 400 status code -> urgency low, medium, high", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title: "Goal 1",
+        description: "Description of Goal 1",
+        urgency: "hola",
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Urgency must be LOW, MEDIUM or HIGH");
   });
   it("it should return 201 status code -> goal created", async () => {
     const response = await request(app)
       .post("/api/goals")
-      .send({ text: "Goal 1" })
+      .send({
+        title: "Goal 1",
+        description: "Description of Goal 1",
+        urgency: "low",
+      })
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(201);
-    expect(response.body.msg).toBe("Goal created successfully!");
     goal1_id = response.body.data._id;
   });
-}); */
+  it("it should return 201 status code -> goal created", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title: "Goal 2",
+        description: "Description of Goal 2",
+        urgency: "medium",
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(201);
+    goal2_id = response.body.data._id;
+  });
+  it("it should return 201 status code -> goal created", async () => {
+    const response = await request(app)
+      .post("/api/goals")
+      .send({
+        title: "Goal 3",
+        description: "Description of Goal 3",
+        urgency: "high",
+      })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(201);
+    goal3_id = response.body.data._id;
+  });
+});
+
+describe("PUT /api/goals/:id route -> update goal", () => {
+  it("it should return 401 status code -> not authorized", async () => {
+    const response = await request(app).put("/api/goals/1");
+    expect(response.status).toBe(401);
+    expect(response.body.msg).toBe("You are not authorized! Please login...");
+  });
+  it("it should return 400 status code -> title must be a string", async () => {
+    const response = await request(app)
+      .put("/api/goals/1")
+      .send({ title: 1234 })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Title must be a string");
+  });
+  it("it should return 400 status code -> description must be a string", async () => {
+    const response = await request(app)
+      .put("/api/goals/1")
+      .send({ description: 1234 })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Description must be a string");
+  });
+  it("it should return 400 status code -> title or description missing", async () => {
+    const response = await request(app)
+      .put("/api/goals/1")
+      .send({})
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Title or description missing");
+  });
+  it("it should return 400 status code -> id invalid format", async () => {
+    const response = await request(app)
+      .put("/api/goals/1")
+      .send({ title: "Title updated!" })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("ID: 1 - Invalid format!");
+  });
+  it("it should return 404 status code -> goal not found", async () => {
+    const response = await request(app)
+      .put("/api/goals/66314419909472edf65229fb")
+      .send({ title: "Title updated!" })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe(
+      "Goal with ID: 66314419909472edf65229fb not found!"
+    );
+  });
+  it("it should return 200 status code -> goal updated", async () => {
+    const response = await request(app)
+      .put(`/api/goals/${goal1_id}`)
+      .send({ title: "Title updated!" })
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+  });
+});
 
 /* describe("GET /api/goals route -> get goals", () => {
   it("it should return 200 status code -> no goals", async () => {
