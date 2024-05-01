@@ -9,6 +9,7 @@ const {
   validateName,
   validateEmail,
   validatePassword,
+  validatePasswordConfirmation,
   validateImageSize,
   validateFileType,
 } = require("../utils/index");
@@ -17,7 +18,7 @@ const { uploadUserImage, deleteImage } = require("../utils/cloudinary");
 
 // Register User
 const registerUser = async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, password2 } = req.body;
   // Validations
 
   if (validateName(name)) {
@@ -31,6 +32,13 @@ const registerUser = async (req, res, next) => {
     return res.status(400).json({
       statusCode: 400,
       msg: validatePassword(password),
+    });
+  }
+
+  if (validatePasswordConfirmation(password, password2)) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: validatePasswordConfirmation(password, password2),
     });
   }
 
