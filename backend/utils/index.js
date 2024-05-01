@@ -13,6 +13,15 @@ const validatePassword = (password) => {
   return false;
 };
 
+// Validates password confirmation
+const validatePasswordConfirmation = (password, password2) => {
+  if (!password2) return "Password Confirmation is missing";
+  if (password !== password2)
+    return "Password and Password Confirmation not match";
+
+  return false;
+};
+
 // Validates email
 const validateEmail = (email) => {
   if (email === 0 || email === false) return "Email must be a string";
@@ -232,6 +241,7 @@ const validateFileType = (file) => {
 module.exports = {
   validateEmail,
   validatePassword,
+  validatePasswordConfirmation,
   validateName,
   validateFileType,
   validateImageSize,
