@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node backend/index.js",
     "dev": "nodemon backend/index.js",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "client": "npm start --prefix frontend"
   },
   "author": "",
   "license": "ISC",
