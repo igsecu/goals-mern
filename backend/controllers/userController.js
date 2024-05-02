@@ -28,6 +28,13 @@ const registerUser = async (req, res, next) => {
     });
   }
 
+  if (validateEmail(email)) {
+    return res.status(400).json({
+      statusCode: 400,
+      msg: validateEmail(email),
+    });
+  }
+
   if (validatePassword(password)) {
     return res.status(400).json({
       statusCode: 400,
@@ -39,13 +46,6 @@ const registerUser = async (req, res, next) => {
     return res.status(400).json({
       statusCode: 400,
       msg: validatePasswordConfirmation(password, password2),
-    });
-  }
-
-  if (validateEmail(email)) {
-    return res.status(400).json({
-      statusCode: 400,
-      msg: validateEmail(email),
     });
   }
 
@@ -70,15 +70,14 @@ const registerUser = async (req, res, next) => {
       password: hashedPassword,
     });
 
+    const userFound = await User.findById(user._id).select(
+      "-password -image_id -updatedAt"
+    );
     if (user) {
       return res.status(201).json({
         statusCode: 201,
         msg: "User created successfully!",
-        data: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-        },
+        data: userFound,
         token: generateToken(user._id),
       });
     }
@@ -129,19 +128,20 @@ const loginUser = async (req, res, next) => {
           msg: "Incorrect password!",
         });
       } else {
+        const userFound = await User.findById(user._id).select(
+          "-password -image_id -updatedAt"
+        );
+
         return res.status(200).json({
           statusCode: 200,
           msg: "Login successfully!",
-          data: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-          },
+          data: userFound,
           token: generateToken(user._id),
         });
       }
     });
   } catch (error) {
+    console.log(error.message);
     return next("Error trying to authenticate a user");
   }
 };
