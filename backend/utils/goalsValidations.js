@@ -10,8 +10,8 @@ const validateTitle = (title) => {
 const validateDescription = (description) => {
   if (!description) return "Description is missing";
   if (typeof description !== "string") return "Description must be a string";
-  if (description.length > 100)
-    return "Description must be 100 characters or less";
+  if (description.length > 200)
+    return "Description must be 200 characters or less";
   return false;
 };
 
