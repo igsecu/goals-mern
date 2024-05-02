@@ -8,7 +8,6 @@ Javascript - NodeJs - ExpressJs - Cloudinary - MongoDB - Mongoose - Jest - Super
 
 <ul>
 <li>Create users accounts</li>
-<li>Update users accounts</li>
 <li>Upload and delete users profile image with Cloudinary</li>
 <li>Authentication with JWT</li>
 <li>List, create and delete goals</li>
