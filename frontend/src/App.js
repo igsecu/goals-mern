@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
+import CreateGoal from "./pages/CreateGoal";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -14,6 +15,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/create-goal" element={<CreateGoal />} />
             <Route element={<ProtectedRoutes />}>
               <Route path="/login" element={<Login />} />{" "}
               <Route path="/register" element={<Register />} />
