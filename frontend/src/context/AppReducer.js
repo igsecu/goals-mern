@@ -46,7 +46,7 @@ export const reducer = (state, action) => {
       return {
         ...state,
         low: state.low.map((l) =>
-          l._id === action.payload._id ? l : action.payload
+          l._id === action.payload._id ? action.payload : l
         ),
       };
     }
