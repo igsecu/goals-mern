@@ -2,7 +2,7 @@ import { GlobalContext } from "../context/GlobalState";
 import { useContext, useState } from "react";
 
 import { IoMdMore, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { FaCircle, FaEdit, FaPlus } from "react-icons/fa";
+import { FaCircle, FaEdit, FaPlus, FaMinus } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
 import Task from "./Task";
@@ -163,6 +163,7 @@ const LowGoal = ({ goal }) => {
         updateLow(goal);
 
         setMessageTask("");
+        setTaskText("");
         showErrorTask(false);
         showCreateTask(false);
       } else {
@@ -200,6 +201,7 @@ const LowGoal = ({ goal }) => {
         updateLow(goal);
 
         setMessageNote("");
+        setNoteText("");
         showErrorNote(false);
         showCreateNote(false);
       } else {
@@ -319,11 +321,19 @@ const LowGoal = ({ goal }) => {
             <div className="d-flex flex-column align-items-center mt-2 border-top border-2 pt-2">
               <div className="w-100 d-flex justify-content-between align-items-center mb-2">
                 <p className="fw-bold mb-0">Tasks</p>
-                <FaPlus
-                  className="text-dark"
-                  type="button"
-                  onClick={() => showCreateTask(!createTask)}
-                />
+                {createTask ? (
+                  <FaMinus
+                    className="text-dark"
+                    type="button"
+                    onClick={() => showCreateTask(!createTask)}
+                  />
+                ) : (
+                  <FaPlus
+                    className="text-dark"
+                    type="button"
+                    onClick={() => showCreateTask(!createTask)}
+                  />
+                )}
               </div>
               {createTask ? (
                 <form onSubmit={onSubmitTask}>
@@ -354,7 +364,10 @@ const LowGoal = ({ goal }) => {
                   </div>
                 </form>
               ) : (
-                goal?.tasks.map((t) => (
+                <></>
+              )}
+              <div className="d-flex flex-column w-100">
+                {goal?.tasks.map((t) => (
                   <Task
                     key={t._id}
                     goal={goal}
@@ -362,17 +375,25 @@ const LowGoal = ({ goal }) => {
                     action={updateLow}
                     user={user}
                   />
-                ))
-              )}
+                ))}
+              </div>
             </div>
             <div className="d-flex flex-column align-items-center border-top border-2 pt-2">
               <div className="w-100 d-flex justify-content-between align-items-center mb-2">
                 <p className="fw-bold mb-0">Notes</p>
-                <FaPlus
-                  className="text-dark"
-                  type="button"
-                  onClick={() => showCreateNote(!createNote)}
-                />
+                {createNote ? (
+                  <FaMinus
+                    className="text-dark"
+                    type="button"
+                    onClick={() => showCreateNote(!createNote)}
+                  />
+                ) : (
+                  <FaPlus
+                    className="text-dark"
+                    type="button"
+                    onClick={() => showCreateNote(!createNote)}
+                  />
+                )}
               </div>
               {createNote ? (
                 <form onSubmit={onSubmitNote}>
@@ -403,7 +424,10 @@ const LowGoal = ({ goal }) => {
                   </div>
                 </form>
               ) : (
-                goal?.notes.map((n) => (
+                <></>
+              )}
+              <div className="d-flex flex-column w-100">
+                {goal?.notes.map((n) => (
                   <Note
                     key={n._id}
                     goal={goal}
@@ -411,8 +435,8 @@ const LowGoal = ({ goal }) => {
                     action={updateLow}
                     user={user}
                   />
-                ))
-              )}
+                ))}
+              </div>
             </div>
             <div className="d-flex flex-column align-items-center border-top border-2 pt-2">
               <div className="w-100 d-flex justify-content-between align-items-center mb-2">
