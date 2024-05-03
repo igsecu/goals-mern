@@ -12,12 +12,25 @@ import { MdLogout } from "react-icons/md";
 import { Link } from "react-router-dom";
 
 const NavbarDashboard = () => {
-  const { logout, user } = useContext(GlobalContext);
+  const {
+    logout,
+    user,
+    setLoaded,
+    postLow,
+    postMedium,
+    postHigh,
+    postCompleted,
+  } = useContext(GlobalContext);
   const navigate = useNavigate();
 
   const logoutUser = () => {
     localStorage.removeItem("user");
     logout();
+    setLoaded(false);
+    postLow([]);
+    postMedium([]);
+    postHigh([]);
+    postCompleted([]);
     navigate("/login");
   };
 
@@ -76,7 +89,7 @@ const NavbarDashboard = () => {
                 data-bs-toggle="dropdown"
                 style={{ cursor: "pointer" }}
               >
-                {user.image ? (
+                {user && user.image ? (
                   <img
                     className="rounded-circle"
                     src={user.image}
@@ -89,7 +102,7 @@ const NavbarDashboard = () => {
                     className="me-2"
                   />
                 )}
-                <h5 className="mb-0 ">{user.name}</h5>
+                <h5 className="mb-0 ">{user?.name}</h5>
               </div>
               <ul className="dropdown-menu border-0 bg-dark rounded-0">
                 <li>
@@ -120,7 +133,7 @@ const NavbarDashboard = () => {
                 data-bs-toggle="dropdown"
                 style={{ cursor: "pointer" }}
               >
-                {user.image ? (
+                {user && user.image ? (
                   <img
                     className="rounded-circle"
                     src={user.image}
@@ -133,7 +146,7 @@ const NavbarDashboard = () => {
                     className="me-2"
                   />
                 )}
-                <h5 className="mb-0 ">{user.name}</h5>
+                <h5 className="mb-0 ">{user?.name}</h5>
               </div>
 
               <Link
