@@ -26,6 +26,11 @@ const LowGoal = ({ goal }) => {
   const [message, setMessage] = useState("");
   const [error, showError] = useState(false);
 
+  const [createTask, showCreateTask] = useState(false);
+  const [taskText, setTaskText] = useState("");
+  const [messageTask, setMessageTask] = useState("");
+  const [errorTask, showErrorTask] = useState(false);
+
   const toMedium = async (id) => {
     const res = await fetch(
       `http://localhost:5000/api/goals/${id}?urgency=MEDIUM`,
@@ -118,6 +123,43 @@ const LowGoal = ({ goal }) => {
       } else {
         setMessage(data.msg);
         showError(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSubmitTask = async (e) => {
+    e.preventDefault();
+
+    const task = {
+      text: taskText,
+      goalId: goal._id,
+    };
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(task),
+      });
+
+      const data = await res.json();
+
+      if (data.statusCode === 201) {
+        goal.tasks.push(data.data);
+
+        updateLow(goal);
+
+        setMessageTask("");
+        showErrorTask(false);
+        showCreateTask(false);
+      } else {
+        setMessageTask(data.msg);
+        showErrorTask(true);
       }
     } catch (error) {
       console.log(error);
@@ -232,8 +274,43 @@ const LowGoal = ({ goal }) => {
             <div className="d-flex flex-column align-items-center mt-2 border-top border-2 pt-2">
               <div className="w-100 d-flex justify-content-between align-items-center mb-2">
                 <p className="fw-bold mb-0">Tasks</p>
-                <FaPlus className="text-dark" type="button" />
+                <FaPlus
+                  className="text-dark"
+                  type="button"
+                  onClick={() => showCreateTask(!createTask)}
+                />
               </div>
+              {createTask ? (
+                <form onSubmit={onSubmitTask}>
+                  <div className="d-flex flex-column">
+                    <input
+                      type="text"
+                      className="form-control bg-white text-black mb-2"
+                      placeholder="Add Task Text"
+                      value={taskText}
+                      onChange={(e) => setTaskText(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="d-flex flex-column justify-content-center align-items-center my-2">
+                    {errorTask ? (
+                      <div
+                        className="alert alert-danger text-center p-1 w-100"
+                        role="alert"
+                      >
+                        {messageTask}!
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    <button type="submit" className="btn btn-dark w-100">
+                      Create Task
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <></>
+              )}
             </div>
             <div className="d-flex flex-column align-items-center border-top border-2 pt-2">
               <div className="w-100 d-flex justify-content-between align-items-center mb-2">
