@@ -19,14 +19,14 @@ const Note = ({ note, goal, action, user }) => {
   };
 
   return (
-    <div className="w-100">
+    <div className="w-100 px-2 py-1 d-flex justify-content-between">
       <p className="mb-0 fw-bold" style={{ fontSize: "14px" }}>
         {note.text}
       </p>
 
-      <div className="d-flex justify-content-end align-items-center mb-2">
+      <div className="d-flex justify-content-end mb-2">
         <MdDelete
-          className="text-dark fs-4 me-2"
+          className="text-dark fs-4"
           type="button"
           onClick={() => deleteNote(note._id)}
         />
