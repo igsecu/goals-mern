@@ -123,7 +123,7 @@ const Dashboard = () => {
   }, [user, navigate]);
 
   return (
-    <div style={{ height: "700px" }}>
+    <div style={{ height: "800px" }}>
       <NavbarDashboard />
       <div className="d-flex justify-content-end pe-5 py-3 bg-dark">
         <Link
@@ -138,28 +138,28 @@ const Dashboard = () => {
       ) : (
         <div className="container-fluid bg-dark h-100 p-4">
           <div className="row h-100">
-            <div className="col-lg-3 col-md-6">
+            <div className="col-lg-3 col-md-6 overflow-scroll h-100">
               {typeof low === "string" ? (
                 <p className="text-white">{low}</p>
               ) : (
                 low?.map((g) => <LowGoal key={g._id} goal={g} />)
               )}
             </div>
-            <div className="col-lg-3 col-md-6">
+            <div className="col-lg-3 col-md-6 overflow-scroll h-100">
               {typeof medium === "string" ? (
                 <p className="text-white">{medium}</p>
               ) : (
                 medium?.map((g) => <MediumGoal key={g._id} goal={g} />)
               )}
             </div>
-            <div className="col-lg-3 col-md-6">
+            <div className="col-lg-3 col-md-6 overflow-scroll h-100">
               {typeof high === "string" ? (
                 <p className="text-white">{high}</p>
               ) : (
                 high?.map((g) => <HighGoal key={g._id} goal={g} />)
               )}
             </div>
-            <div className="col-lg-3 col-md-6">
+            <div className="col-lg-3 col-md-6 overflow-scroll h-100">
               {typeof completed === "string" ? (
                 <p className="text-white">{completed}</p>
               ) : (
