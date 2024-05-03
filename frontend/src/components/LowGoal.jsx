@@ -39,6 +39,11 @@ const LowGoal = ({ goal }) => {
   const [messageNote, setMessageNote] = useState("");
   const [errorNote, showErrorNote] = useState(false);
 
+  const [imageStatus, setImageStatus] = useState(false);
+  const [file, setFile] = useState(null);
+  const [messageImage, setMessageImage] = useState("");
+  const [errorImage, showErrorImage] = useState(false);
+
   const toMedium = async (id) => {
     const res = await fetch(
       `http://localhost:5000/api/goals/${id}?urgency=MEDIUM`,
@@ -210,6 +215,64 @@ const LowGoal = ({ goal }) => {
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+  };
+
+  const onSubmitImage = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/goals/${goal._id}/image`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: formData,
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.statusCode === 200) {
+        goal.image = data.data.image;
+        updateLow(goal);
+
+        setMessageImage("");
+        setFile(null);
+        showErrorImage(false);
+        setImageStatus(false);
+      } else {
+        setMessageImage(data.msg);
+        showErrorImage(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteImage = async (id) => {
+    const res = await fetch(`http://localhost:5000/api/goals/${id}/image`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (data.statusCode === 200) {
+      goal.image = null;
+      updateLow(goal);
     }
   };
 
@@ -441,8 +504,66 @@ const LowGoal = ({ goal }) => {
             <div className="d-flex flex-column align-items-center border-top border-2 pt-2">
               <div className="w-100 d-flex justify-content-between align-items-center mb-2">
                 <p className="fw-bold mb-0">Image</p>
-                <FaPlus className="text-dark" type="button" />
+                {goal.image === null ? (
+                  !imageStatus ? (
+                    <FaPlus
+                      className="text-dark"
+                      type="button"
+                      onClick={() => setImageStatus(!imageStatus)}
+                    />
+                  ) : (
+                    <FaMinus
+                      className="text-dark"
+                      type="button"
+                      onClick={() => setImageStatus(!imageStatus)}
+                    />
+                  )
+                ) : (
+                  <MdDelete
+                    className="text-dark"
+                    type="button"
+                    onClick={() => deleteImage(goal._id)}
+                  />
+                )}
               </div>
+              {imageStatus ? (
+                <form onSubmit={onSubmitImage}>
+                  <div className="d-flex flex-column">
+                    <input
+                      type="file"
+                      className="form-control bg-white text-black mb-2"
+                      placeholder="Add Note Text"
+                      onChange={handleFileChange}
+                    />
+                  </div>
+
+                  <div className="d-flex flex-column justify-content-center align-items-center my-2">
+                    {errorImage ? (
+                      <div
+                        className="alert alert-danger text-center p-1 w-100"
+                        role="alert"
+                      >
+                        {messageImage}!
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    <button type="submit" className="btn btn-dark w-100">
+                      Upload Image
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <></>
+              )}
+              {goal.image && (
+                <img
+                  src={goal.image}
+                  alt="goal"
+                  className=""
+                  style={{ height: "200px" }}
+                />
+              )}
             </div>
           </>
         )}
