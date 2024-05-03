@@ -5,6 +5,9 @@ import { IoMdMore, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaCircle, FaEdit, FaPlus } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
+import Task from "./Task";
+import Note from "./Note";
+
 const LowGoal = ({ goal }) => {
   const {
     user,
@@ -30,6 +33,11 @@ const LowGoal = ({ goal }) => {
   const [taskText, setTaskText] = useState("");
   const [messageTask, setMessageTask] = useState("");
   const [errorTask, showErrorTask] = useState(false);
+
+  const [createNote, showCreateNote] = useState(false);
+  const [noteText, setNoteText] = useState("");
+  const [messageNote, setMessageNote] = useState("");
+  const [errorNote, showErrorNote] = useState(false);
 
   const toMedium = async (id) => {
     const res = await fetch(
@@ -160,6 +168,43 @@ const LowGoal = ({ goal }) => {
       } else {
         setMessageTask(data.msg);
         showErrorTask(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSubmitNote = async (e) => {
+    e.preventDefault();
+
+    const note = {
+      text: noteText,
+      goalId: goal._id,
+    };
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/notes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(note),
+      });
+
+      const data = await res.json();
+
+      if (data.statusCode === 201) {
+        goal.notes.push(data.data);
+
+        updateLow(goal);
+
+        setMessageNote("");
+        showErrorNote(false);
+        showCreateNote(false);
+      } else {
+        setMessageNote(data.msg);
+        showErrorNote(true);
       }
     } catch (error) {
       console.log(error);
@@ -309,14 +354,65 @@ const LowGoal = ({ goal }) => {
                   </div>
                 </form>
               ) : (
-                <></>
+                goal?.tasks.map((t) => (
+                  <Task
+                    key={t._id}
+                    goal={goal}
+                    task={t}
+                    action={updateLow}
+                    user={user}
+                  />
+                ))
               )}
             </div>
             <div className="d-flex flex-column align-items-center border-top border-2 pt-2">
               <div className="w-100 d-flex justify-content-between align-items-center mb-2">
                 <p className="fw-bold mb-0">Notes</p>
-                <FaPlus className="text-dark" type="button" />
+                <FaPlus
+                  className="text-dark"
+                  type="button"
+                  onClick={() => showCreateNote(!createNote)}
+                />
               </div>
+              {createNote ? (
+                <form onSubmit={onSubmitNote}>
+                  <div className="d-flex flex-column">
+                    <input
+                      type="text"
+                      className="form-control bg-white text-black mb-2"
+                      placeholder="Add Note Text"
+                      value={noteText}
+                      onChange={(e) => setNoteText(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="d-flex flex-column justify-content-center align-items-center my-2">
+                    {errorNote ? (
+                      <div
+                        className="alert alert-danger text-center p-1 w-100"
+                        role="alert"
+                      >
+                        {messageNote}!
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    <button type="submit" className="btn btn-dark w-100">
+                      Create Note
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                goal?.notes.map((n) => (
+                  <Note
+                    key={n._id}
+                    goal={goal}
+                    note={n}
+                    action={updateLow}
+                    user={user}
+                  />
+                ))
+              )}
             </div>
             <div className="d-flex flex-column align-items-center border-top border-2 pt-2">
               <div className="w-100 d-flex justify-content-between align-items-center mb-2">
