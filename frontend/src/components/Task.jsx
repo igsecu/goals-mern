@@ -36,6 +36,7 @@ const Task = ({ task, goal, action, user }) => {
         task.status = "IN PROGRESS";
         goal.tasks = goal.tasks.map((t) => (t._id === id ? task : t));
         action(goal);
+        return;
       }
     }
     if (task.status === "IN PROGRESS") {
@@ -55,30 +56,33 @@ const Task = ({ task, goal, action, user }) => {
         task.status = "COMPLETED";
         goal.tasks = goal.tasks.map((t) => (t._id === id ? task : t));
         action(goal);
+        return;
       }
     }
   };
 
   return (
-    <div className="w-100">
-      <p className="mb-0 fw-bold" style={{ fontSize: "14px" }}>
-        {task.text}
-      </p>
+    <div className="w-100 px-2 py-1 d-flex justify-content-between">
+      <div>
+        <p className="mb-0 fw-bold" style={{ fontSize: "14px" }}>
+          {task.text}
+        </p>
 
-      <p
-        className={`fw-bold ${
-          task.status === "NOT STARTED"
-            ? "text-danger"
-            : task.status === "IN PROGRESS"
-            ? "text-primary"
-            : "text-success"
-        } mb-2`}
-        style={{ fontSize: "12px" }}
-      >
-        {task.status}
-      </p>
+        <p
+          className={`fw-bold mb-2 ${
+            task.status === "NOT STARTED"
+              ? "text-danger"
+              : task.status === "IN PROGRESS"
+              ? "text-primary"
+              : "text-success"
+          }`}
+          style={{ fontSize: "12px" }}
+        >
+          {task.status}
+        </p>
+      </div>
 
-      <div className="d-flex justify-content-end align-items-center mb-2">
+      <div className="d-flex justify-content-end">
         {task.status !== "COMPLETED" && (
           <RxUpdate
             className="text-dark fs-5 me-2"
@@ -88,7 +92,7 @@ const Task = ({ task, goal, action, user }) => {
         )}
 
         <MdDelete
-          className="text-dark fs-4 me-2"
+          className="text-dark fs-4"
           type="button"
           onClick={() => deleteTask(task._id)}
         />
