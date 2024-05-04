@@ -298,10 +298,7 @@ const MediumGoal = ({ goal }) => {
   };
 
   return (
-    <div
-      className="card border-0 border-start border-5 border-warning mb-2"
-      style={{ width: "350px" }}
-    >
+    <div className="card border-0 border-start border-5 border-warning mb-2 goal">
       <div className="card-body">
         <p className="fw-bold text-warning mb-2" style={{ fontSize: "12px" }}>
           MEDIUM URGENCY
