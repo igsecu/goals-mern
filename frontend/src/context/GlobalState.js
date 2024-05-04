@@ -7,7 +7,6 @@ const user = JSON.parse(localStorage.getItem("user"));
 const initialState = {
   user: user ? user : null,
   loaded: false,
-  message: "",
   low: [],
   medium: [],
   high: [],
@@ -72,7 +71,21 @@ export const GlobalProvider = ({ children }) => {
 
   const updateLow = (goal) => {
     dispatch({
-      type: "UPDATE_GOAL",
+      type: "UPDATE_LOW",
+      payload: goal,
+    });
+  };
+
+  const updateMedium = (goal) => {
+    dispatch({
+      type: "UPDATE_MEDIUM",
+      payload: goal,
+    });
+  };
+
+  const updateHigh = (goal) => {
+    dispatch({
+      type: "UPDATE_HIGH",
       payload: goal,
     });
   };
@@ -94,6 +107,8 @@ export const GlobalProvider = ({ children }) => {
         postHigh,
         postCompleted,
         updateLow,
+        updateMedium,
+        updateHigh,
       }}
     >
       {children}
