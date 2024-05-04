@@ -19,7 +19,6 @@ const MediumGoal = ({ goal }) => {
     postHigh,
     completed,
     postCompleted,
-    updateLow,
     updateMedium,
   } = useContext(GlobalContext);
 
@@ -523,7 +522,7 @@ const MediumGoal = ({ goal }) => {
                     key={n._id}
                     goal={goal}
                     note={n}
-                    action={updateLow}
+                    action={updateMedium}
                     user={user}
                   />
                 ))}
