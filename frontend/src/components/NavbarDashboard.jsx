@@ -35,7 +35,7 @@ const NavbarDashboard = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-md bg-dark navbar-dark py-3 text-white ">
+    <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-3 text-white ">
       <div className="container-fluid">
         <div className="d-flex flex-justify-start align-items-center">
           <img src={logo} alt="logo" style={{ width: "50px" }} />
