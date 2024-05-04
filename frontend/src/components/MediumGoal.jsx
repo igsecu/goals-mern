@@ -464,9 +464,9 @@ const MediumGoal = ({ goal }) => {
                     key={t._id}
                     goal={goal}
                     task={t}
-                    goals={low}
-                    postAction={postLow}
-                    action={updateLow}
+                    goals={medium}
+                    postAction={postMedium}
+                    action={updateMedium}
                     user={user}
                   />
                 ))}
