@@ -299,10 +299,7 @@ const HighGoal = ({ goal }) => {
   };
 
   return (
-    <div
-      className="card border-0 border-start border-5 border-danger mb-2"
-      style={{ width: "350px" }}
-    >
+    <div className="card border-0 border-start border-5 border-danger mb-2 goal">
       <div className="card-body">
         <p className="fw-bold text-danger mb-2" style={{ fontSize: "12px" }}>
           HIGH URGENCY
