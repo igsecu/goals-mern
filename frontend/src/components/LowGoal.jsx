@@ -297,10 +297,7 @@ const LowGoal = ({ goal }) => {
   };
 
   return (
-    <div
-      className="card border-0 border-start border-5 border-success mb-2"
-      style={{ width: "350px" }}
-    >
+    <div className="card border-0 border-start border-5 border-success mb-2 goal">
       <div className="card-body">
         <p className="fw-bold text-success mb-2" style={{ fontSize: "12px" }}>
           LOW URGENCY
