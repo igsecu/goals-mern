@@ -1,7 +1,12 @@
 import { MdDelete } from "react-icons/md";
-import { RxUpdate } from "react-icons/rx";
+import { FaArrowUp } from "react-icons/fa";
 
-const Task = ({ task, goal, action, user }) => {
+import { GlobalContext } from "../context/GlobalState";
+import { useContext } from "react";
+
+const Task = ({ task, goal, postAction, action, user, goals }) => {
+  const { completed, postCompleted } = useContext(GlobalContext);
+
   const deleteTask = async (id) => {
     const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
       method: "DELETE",
@@ -55,8 +60,17 @@ const Task = ({ task, goal, action, user }) => {
       if (data.statusCode === 200) {
         task.status = "COMPLETED";
         goal.tasks = goal.tasks.map((t) => (t._id === id ? task : t));
-        action(goal);
-        return;
+        if (data.msg.startsWith("You completed")) {
+          const aux = goals.filter((l) => l._id !== goal._id);
+          postAction(aux);
+
+          const auxCompleted = [goal, ...completed];
+          postCompleted(auxCompleted);
+          return;
+        } else {
+          action(goal);
+          return;
+        }
       }
     }
   };
@@ -81,22 +95,23 @@ const Task = ({ task, goal, action, user }) => {
           {task.status}
         </p>
       </div>
+      {goal.isCompleted === false && (
+        <div className="d-flex justify-content-end">
+          {task.status !== "COMPLETED" && (
+            <FaArrowUp
+              className="text-dark fs-5 me-2"
+              type="button"
+              onClick={() => updateTask(task._id)}
+            />
+          )}
 
-      <div className="d-flex justify-content-end">
-        {task.status !== "COMPLETED" && (
-          <RxUpdate
-            className="text-dark fs-5 me-2"
+          <MdDelete
+            className="text-dark fs-4"
             type="button"
-            onClick={() => updateTask(task._id)}
+            onClick={() => deleteTask(task._id)}
           />
-        )}
-
-        <MdDelete
-          className="text-dark fs-4"
-          type="button"
-          onClick={() => deleteTask(task._id)}
-        />
-      </div>
+        </div>
+      )}
     </div>
   );
 };
