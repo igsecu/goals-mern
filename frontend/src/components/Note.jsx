@@ -1,5 +1,4 @@
 import { MdDelete } from "react-icons/md";
-import { RxUpdate } from "react-icons/rx";
 
 const Note = ({ note, goal, action, user }) => {
   const deleteNote = async (id) => {
@@ -24,13 +23,15 @@ const Note = ({ note, goal, action, user }) => {
         {note.text}
       </p>
 
-      <div className="d-flex justify-content-end mb-2">
-        <MdDelete
-          className="text-dark fs-4"
-          type="button"
-          onClick={() => deleteNote(note._id)}
-        />
-      </div>
+      {goal.isCompleted === false && (
+        <div className="d-flex justify-content-end mb-2">
+          <MdDelete
+            className="text-dark fs-4"
+            type="button"
+            onClick={() => deleteNote(note._id)}
+          />
+        </div>
+      )}
     </div>
   );
 };
