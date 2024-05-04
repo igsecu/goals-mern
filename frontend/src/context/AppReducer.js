@@ -42,10 +42,26 @@ export const reducer = (state, action) => {
         completed: action.payload,
       };
     }
-    case "UPDATE_GOAL": {
+    case "UPDATE_LOW": {
       return {
         ...state,
         low: state.low.map((l) =>
+          l._id === action.payload._id ? action.payload : l
+        ),
+      };
+    }
+    case "UPDATE_MEDIUM": {
+      return {
+        ...state,
+        medium: state.medium.map((l) =>
+          l._id === action.payload._id ? action.payload : l
+        ),
+      };
+    }
+    case "UPDATE_HIGH": {
+      return {
+        ...state,
+        high: state.high.map((l) =>
           l._id === action.payload._id ? action.payload : l
         ),
       };
