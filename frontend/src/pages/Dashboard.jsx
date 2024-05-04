@@ -139,28 +139,28 @@ const Dashboard = () => {
       ) : (
         <div className="container-fluid bg-dark h-100 p-4">
           <div className="row h-100">
-            <div className="col-lg-3 col-md-6 overflow-scroll h-100 d-flex flex-column align-items-center">
+            <div className="col-lg-3 overflow-scroll h-100 d-flex flex-column align-items-center">
               {typeof low === "string" ? (
                 <p className="text-white">{low}</p>
               ) : (
                 low?.map((g) => <LowGoal key={g._id} goal={g} />)
               )}
             </div>
-            <div className="col-lg-3 col-md-6 overflow-scroll h-100">
+            <div className="d-none d-lg-block col-lg-3 overflow-scroll h-100 d-flex flex-column align-items-center">
               {typeof medium === "string" ? (
                 <p className="text-white">{medium}</p>
               ) : (
                 medium?.map((g) => <MediumGoal key={g._id} goal={g} />)
               )}
             </div>
-            <div className="col-lg-3 col-md-6 overflow-scroll h-100">
+            <div className="d-none d-lg-block col-lg-3 overflow-scroll h-100 d-flex flex-column align-items-center">
               {typeof high === "string" ? (
                 <p className="text-white">{high}</p>
               ) : (
                 high?.map((g) => <HighGoal key={g._id} goal={g} />)
               )}
             </div>
-            <div className="col-lg-3 col-md-6 overflow-scroll h-100">
+            <div className="d-none d-lg-block col-lg-3 overflow-scroll h-100 d-flex flex-column align-items-center">
               {typeof completed === "string" ? (
                 <p className="text-white">{completed}</p>
               ) : (
