@@ -2,7 +2,7 @@ import { GlobalContext } from "../context/GlobalState";
 import { useContext, useState } from "react";
 
 import { IoMdMore, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { FaCircle, FaEdit, FaPlus, FaMinus } from "react-icons/fa";
+import { FaCircle, FaEdit, FaPlus, FaMinus, FaCheck } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
 import Task from "./Task";
@@ -85,6 +85,26 @@ const LowGoal = ({ goal }) => {
 
       const auxHigh = [goal, ...high];
       postHigh(auxHigh);
+    }
+  };
+
+  const toComplete = async (id) => {
+    const res = await fetch(`http://localhost:5000/api/goals/${id}/completed`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (data.statusCode === 200) {
+      goal.isCompleted = true;
+      const auxLow = low.filter((l) => l._id !== id);
+      postLow(auxLow);
+
+      const auxCompleted = [goal, ...completed];
+      postCompleted(auxCompleted);
     }
   };
 
@@ -279,7 +299,7 @@ const LowGoal = ({ goal }) => {
   return (
     <div
       className="card border-0 border-start border-5 border-success mb-2"
-      style={{ width: "18rem" }}
+      style={{ width: "350px" }}
     >
       <div className="card-body">
         <p className="fw-bold text-success mb-2" style={{ fontSize: "12px" }}>
@@ -296,7 +316,7 @@ const LowGoal = ({ goal }) => {
                 aria-expanded="false"
               />
 
-              <ul className="dropdown-menu p-2 bg-dark text-white">
+              <ul className="dropdown-menu p-3 bg-dark text-white">
                 <li
                   style={{ cursor: "pointer" }}
                   className="mb-2"
@@ -307,10 +327,18 @@ const LowGoal = ({ goal }) => {
                 </li>
                 <li
                   style={{ cursor: "pointer" }}
+                  className="mb-2"
                   onClick={() => toHigh(goal._id)}
                 >
                   <FaCircle className="text-danger me-2" />
                   Pass to High Urgency
+                </li>
+                <li
+                  style={{ cursor: "pointer" }}
+                  onClick={() => toComplete(goal._id)}
+                >
+                  <FaCheck className="text-primary me-2" />
+                  Complete Goal
                 </li>
               </ul>
             </div>
@@ -435,6 +463,8 @@ const LowGoal = ({ goal }) => {
                     key={t._id}
                     goal={goal}
                     task={t}
+                    goals={low}
+                    postAction={postLow}
                     action={updateLow}
                     user={user}
                   />
