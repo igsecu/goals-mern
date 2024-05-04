@@ -9,13 +9,10 @@ const CompletedGoal = ({ goal }) => {
   const [show, setShow] = useState(false);
 
   return (
-    <div
-      className="card border-0 border-start border-5 border-secondary mb-2"
-      style={{ width: "350px" }}
-    >
+    <div className="card border-0 border-start border-5 border-secondary mb-2 goal">
       <div className="card-body">
         <p className="fw-bold text-secondary mb-2" style={{ fontSize: "12px" }}>
-          Completed
+          COMPLETED
         </p>
         <div className="d-flex justify-content-between align-items-center mb-2">
           <h5 className="card-title mb-0">{goal.title}</h5>
