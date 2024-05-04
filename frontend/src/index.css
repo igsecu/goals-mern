@@ -15,3 +15,55 @@ code {
 ::placeholder {
   color: gray !important;
 }
+
+.goal {
+  width: 350px;
+}
+
+@media (max-width: 1480px) {
+  .goal {
+    width: 300px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .goal {
+    width: 270px;
+  }
+}
+
+@media (max-width: 1150px) {
+  .goal {
+    width: 250px;
+  }
+}
+
+@media (max-width: 1070px) {
+  .goal {
+    width: 230px;
+  }
+}
+
+@media (max-width: 992px) {
+  .goal {
+    width: 500px;
+  }
+}
+
+@media (max-width: 530px) {
+  .goal {
+    width: 400px;
+  }
+}
+
+@media (max-width: 430px) {
+  .goal {
+    width: 350px;
+  }
+}
+
+@media (max-width: 380px) {
+  .goal {
+    width: 300px;
+  }
+}
