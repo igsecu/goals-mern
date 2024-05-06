@@ -1,4 +1,5 @@
 import { MdDelete } from "react-icons/md";
+import { toast } from "react-toastify";
 
 const Note = ({ note, goal, action, user }) => {
   const deleteNote = async (id) => {
@@ -14,6 +15,16 @@ const Note = ({ note, goal, action, user }) => {
     if (data.statusCode === 200) {
       goal.notes = goal.notes.filter((t) => t._id !== id);
       action(goal);
+      toast.error(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
