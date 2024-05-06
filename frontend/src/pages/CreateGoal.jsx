@@ -8,6 +8,8 @@ import Spinner from "../components/Spinner";
 
 import { FaArrowLeft } from "react-icons/fa";
 
+import { toast } from "react-toastify";
+
 const CreateGoal = () => {
   const { user, setLoaded } = useContext(GlobalContext);
   const navigate = useNavigate();
@@ -51,6 +53,16 @@ const CreateGoal = () => {
 
       if (data.statusCode === 201) {
         setLoaded(false);
+        toast.success(data.msg, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
         navigate("/");
       } else {
         setMessage(data.msg);
