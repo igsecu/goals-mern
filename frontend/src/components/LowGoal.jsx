@@ -8,6 +8,8 @@ import { MdDelete } from "react-icons/md";
 import Task from "./Task";
 import Note from "./Note";
 
+import { toast } from "react-toastify";
+
 const LowGoal = ({ goal }) => {
   const {
     user,
@@ -121,6 +123,16 @@ const LowGoal = ({ goal }) => {
     if (data.statusCode === 200) {
       const auxLow = low.filter((l) => l._id !== id);
       postLow(auxLow);
+      toast.error(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
@@ -186,6 +198,16 @@ const LowGoal = ({ goal }) => {
         goal.tasks.push(data.data);
 
         updateLow(goal);
+        toast.success(data.msg, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
 
         setMessageTask("");
         setTaskText("");
@@ -224,6 +246,16 @@ const LowGoal = ({ goal }) => {
         goal.notes.push(data.data);
 
         updateLow(goal);
+        toast.success(data.msg, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
 
         setMessageNote("");
         setNoteText("");
@@ -266,6 +298,16 @@ const LowGoal = ({ goal }) => {
       if (data.statusCode === 200) {
         goal.image = data.data.image;
         updateLow(goal);
+        toast.success(data.msg, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
 
         setMessageImage("");
         setFile(null);
@@ -293,6 +335,16 @@ const LowGoal = ({ goal }) => {
     if (data.statusCode === 200) {
       goal.image = null;
       updateLow(goal);
+      toast.error(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
