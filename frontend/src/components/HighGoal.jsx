@@ -8,6 +8,8 @@ import { MdDelete } from "react-icons/md";
 import Task from "./Task";
 import Note from "./Note";
 
+import { toast } from "react-toastify";
+
 const HighGoal = ({ goal }) => {
   const {
     user,
@@ -102,6 +104,16 @@ const HighGoal = ({ goal }) => {
       goal.isCompleted = true;
       const auxHigh = high.filter((l) => l._id !== id);
       postHigh(auxHigh);
+      toast.success(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
 
       const auxCompleted = [goal, ...completed];
       postCompleted(auxCompleted);
@@ -121,6 +133,16 @@ const HighGoal = ({ goal }) => {
     if (data.statusCode === 200) {
       const auxHigh = high.filter((l) => l._id !== id);
       postHigh(auxHigh);
+      toast.error(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
@@ -186,6 +208,16 @@ const HighGoal = ({ goal }) => {
         goal.tasks.push(data.data);
 
         updateHigh(goal);
+        toast.success(data.msg, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
 
         setMessageTask("");
         setTaskText("");
@@ -224,6 +256,16 @@ const HighGoal = ({ goal }) => {
         goal.notes.push(data.data);
 
         updateHigh(goal);
+        toast.success(data.msg, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
 
         setMessageNote("");
         setNoteText("");
@@ -266,6 +308,16 @@ const HighGoal = ({ goal }) => {
       if (data.statusCode === 200) {
         goal.image = data.data.image;
         updateHigh(goal);
+        toast.success(data.msg, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
 
         setMessageImage("");
         setFile(null);
@@ -293,6 +345,16 @@ const HighGoal = ({ goal }) => {
     if (data.statusCode === 200) {
       goal.image = null;
       updateHigh(goal);
+      toast.error(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
