@@ -4,6 +4,8 @@ import { FaArrowUp } from "react-icons/fa";
 import { GlobalContext } from "../context/GlobalState";
 import { useContext } from "react";
 
+import { toast } from "react-toastify";
+
 const Task = ({ task, goal, postAction, action, user, goals }) => {
   const { completed, postCompleted } = useContext(GlobalContext);
 
@@ -20,6 +22,16 @@ const Task = ({ task, goal, postAction, action, user, goals }) => {
     if (data.statusCode === 200) {
       goal.tasks = goal.tasks.filter((t) => t._id !== id);
       action(goal);
+      toast.error(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
@@ -66,6 +78,16 @@ const Task = ({ task, goal, postAction, action, user, goals }) => {
 
           const auxCompleted = [goal, ...completed];
           postCompleted(auxCompleted);
+          toast.success(data.msg, {
+            position: "bottom-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
           return;
         } else {
           action(goal);
