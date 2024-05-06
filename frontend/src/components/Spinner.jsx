@@ -1,6 +1,9 @@
 const Spinner = () => {
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
+    <div
+      className="bg-dark d-flex justify-content-center align-items-center"
+      style={{ height: "750px" }}
+    >
       <div
         className="spinner-border text-success"
         role="status"
