@@ -8,6 +8,8 @@ import { MdDelete } from "react-icons/md";
 import Task from "./Task";
 import Note from "./Note";
 
+import { toast } from "react-toastify";
+
 const MediumGoal = ({ goal }) => {
   const {
     user,
@@ -102,6 +104,16 @@ const MediumGoal = ({ goal }) => {
       goal.isCompleted = true;
       const auxMedium = medium.filter((l) => l._id !== id);
       postMedium(auxMedium);
+      toast.success(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
 
       const auxCompleted = [goal, ...completed];
       postCompleted(auxCompleted);
@@ -121,6 +133,16 @@ const MediumGoal = ({ goal }) => {
     if (data.statusCode === 200) {
       const auxMedium = medium.filter((l) => l._id !== id);
       postMedium(auxMedium);
+      toast.error(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
@@ -186,6 +208,16 @@ const MediumGoal = ({ goal }) => {
         goal.tasks.push(data.data);
 
         updateMedium(goal);
+        toast.success(data.msg, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
 
         setMessageTask("");
         setTaskText("");
@@ -224,6 +256,16 @@ const MediumGoal = ({ goal }) => {
         goal.notes.push(data.data);
 
         updateMedium(goal);
+        toast.success(data.msg, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
 
         setMessageNote("");
         setNoteText("");
@@ -266,6 +308,16 @@ const MediumGoal = ({ goal }) => {
       if (data.statusCode === 200) {
         goal.image = data.data.image;
         updateMedium(goal);
+        toast.success(data.msg, {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
 
         setMessageImage("");
         setFile(null);
@@ -293,6 +345,16 @@ const MediumGoal = ({ goal }) => {
     if (data.statusCode === 200) {
       goal.image = null;
       updateMedium(goal);
+      toast.error(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
