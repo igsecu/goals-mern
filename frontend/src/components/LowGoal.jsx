@@ -7,6 +7,7 @@ import { MdDelete } from "react-icons/md";
 
 import Task from "./Task";
 import Note from "./Note";
+import SmallSpinner from "./SmallSpinner";
 
 import { toast } from "react-toastify";
 
@@ -45,6 +46,8 @@ const LowGoal = ({ goal }) => {
   const [file, setFile] = useState(null);
   const [messageImage, setMessageImage] = useState("");
   const [errorImage, showErrorImage] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
   const toMedium = async (id) => {
     const res = await fetch(
@@ -292,6 +295,7 @@ const LowGoal = ({ goal }) => {
     formData.append("image", file);
 
     try {
+      setLoading(true);
       const res = await fetch(
         `http://localhost:5000/api/goals/${goal._id}/image`,
         {
@@ -323,9 +327,11 @@ const LowGoal = ({ goal }) => {
         setFile(null);
         showErrorImage(false);
         setImageStatus(false);
+        setLoading(false);
       } else {
         setMessageImage(data.msg);
         showErrorImage(true);
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -333,6 +339,7 @@ const LowGoal = ({ goal }) => {
   };
 
   const deleteImage = async (id) => {
+    setLoading(true);
     const res = await fetch(`http://localhost:5000/api/goals/${id}/image`, {
       method: "DELETE",
       headers: {
@@ -355,6 +362,7 @@ const LowGoal = ({ goal }) => {
         progress: undefined,
         theme: "dark",
       });
+      setLoading(false);
     }
   };
 
@@ -590,70 +598,74 @@ const LowGoal = ({ goal }) => {
                 ))}
               </div>
             </div>
-            <div className="d-flex flex-column align-items-center border-top border-2 pt-2">
-              <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                <p className="fw-bold mb-0">Image</p>
-                {goal.image === null ? (
-                  !imageStatus ? (
-                    <FaPlus
-                      className="text-dark"
-                      type="button"
-                      onClick={() => setImageStatus(!imageStatus)}
-                    />
+            {!loading ? (
+              <div className="d-flex flex-column align-items-center border-top border-2 pt-2">
+                <div className="w-100 d-flex justify-content-between align-items-center mb-2">
+                  <p className="fw-bold mb-0">Image</p>
+                  {goal.image === null ? (
+                    !imageStatus ? (
+                      <FaPlus
+                        className="text-dark"
+                        type="button"
+                        onClick={() => setImageStatus(!imageStatus)}
+                      />
+                    ) : (
+                      <FaMinus
+                        className="text-dark"
+                        type="button"
+                        onClick={() => setImageStatus(!imageStatus)}
+                      />
+                    )
                   ) : (
-                    <FaMinus
+                    <MdDelete
                       className="text-dark"
                       type="button"
-                      onClick={() => setImageStatus(!imageStatus)}
+                      onClick={() => deleteImage(goal._id)}
                     />
-                  )
+                  )}
+                </div>
+                {imageStatus ? (
+                  <form onSubmit={onSubmitImage}>
+                    <div className="d-flex flex-column">
+                      <input
+                        type="file"
+                        className="form-control bg-white text-black mb-2"
+                        placeholder="Add Note Text"
+                        onChange={handleFileChange}
+                      />
+                    </div>
+
+                    <div className="d-flex flex-column justify-content-center align-items-center my-2">
+                      {errorImage ? (
+                        <div
+                          className="alert alert-danger text-center p-1 w-100"
+                          role="alert"
+                        >
+                          {messageImage}!
+                        </div>
+                      ) : (
+                        <></>
+                      )}
+                      <button type="submit" className="btn btn-dark w-100">
+                        Upload Image
+                      </button>
+                    </div>
+                  </form>
                 ) : (
-                  <MdDelete
-                    className="text-dark"
-                    type="button"
-                    onClick={() => deleteImage(goal._id)}
+                  <></>
+                )}
+                {goal.image && (
+                  <img
+                    src={goal.image}
+                    alt="goal"
+                    className="bg-secondary"
+                    style={{ height: "200px" }}
                   />
                 )}
               </div>
-              {imageStatus ? (
-                <form onSubmit={onSubmitImage}>
-                  <div className="d-flex flex-column">
-                    <input
-                      type="file"
-                      className="form-control bg-white text-black mb-2"
-                      placeholder="Add Note Text"
-                      onChange={handleFileChange}
-                    />
-                  </div>
-
-                  <div className="d-flex flex-column justify-content-center align-items-center my-2">
-                    {errorImage ? (
-                      <div
-                        className="alert alert-danger text-center p-1 w-100"
-                        role="alert"
-                      >
-                        {messageImage}!
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    <button type="submit" className="btn btn-dark w-100">
-                      Upload Image
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <></>
-              )}
-              {goal.image && (
-                <img
-                  src={goal.image}
-                  alt="goal"
-                  className=""
-                  style={{ height: "200px" }}
-                />
-              )}
-            </div>
+            ) : (
+              <SmallSpinner />
+            )}
           </>
         )}
       </div>
