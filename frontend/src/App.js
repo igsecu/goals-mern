@@ -7,6 +7,8 @@ import Register from "./pages/Register";
 import { GlobalProvider } from "./context/GlobalState";
 
 import ProtectedRoutes from "./utils/ProtectedRoutes";
+import { Bounce, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -23,6 +25,19 @@ function App() {
           </Routes>
         </Router>
       </GlobalProvider>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        style={{ transition: Bounce }}
+      />
     </>
   );
 }
