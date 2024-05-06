@@ -63,24 +63,24 @@ const CreateGoal = () => {
   };
 
   return (
-    <div style={{ height: "800px" }}>
+    <div style={{ height: "750px" }}>
       <NavbarDashboard />
-      <div className="d-flex justify-content-center align-items-center bg-dark h-100">
+      <div className="d-flex justify-content-center align-items-start bg-dark h-100">
         {loading ? (
           <Spinner />
         ) : (
-          <div>
+          <div
+            className="bg-dark d-flex flex-column w-100 mt-5"
+            style={{ maxWidth: "1000px" }}
+          >
             <Link
               to="/"
-              className="d-none d-md-block d-flex align-items-center text-decoration-none text-dark"
+              className="d-none d-md-block d-flex align-items-center text-decoration-none text-dark ms-5"
             >
               <FaArrowLeft className="me-2 text-white fs-5" />
               <span className="text-white fs-5">Back to DashBoard</span>
             </Link>
-            <div
-              className="bg-dark d-flex align-items-center p-5"
-              style={{ maxWidth: "1000px" }}
-            >
+            <div className="p-5">
               <div className="w-100">
                 <h1 className="text-white mb-3 text-center">Create New Goal</h1>
                 <form onSubmit={onSubmit}>
