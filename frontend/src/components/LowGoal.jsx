@@ -104,6 +104,16 @@ const LowGoal = ({ goal }) => {
       goal.isCompleted = true;
       const auxLow = low.filter((l) => l._id !== id);
       postLow(auxLow);
+      toast.success(data.msg, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
 
       const auxCompleted = [goal, ...completed];
       postCompleted(auxCompleted);
