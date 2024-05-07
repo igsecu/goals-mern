@@ -87,10 +87,10 @@ const CreateGoal = () => {
           >
             <Link
               to="/"
-              className="d-none d-md-block d-flex align-items-center text-decoration-none text-dark ms-5"
+              className="d-flex align-items-center text-decoration-none text-dark ms-5"
             >
               <FaArrowLeft className="me-2 text-white fs-5" />
-              <span className="text-white fs-5">Back to DashBoard</span>
+              <span className="text-white fs-5">Back to Dashboard</span>
             </Link>
             <div className="p-5">
               <div className="w-100">
