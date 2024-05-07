@@ -16,6 +16,10 @@ code {
   color: gray !important;
 }
 
+.dropmenu {
+  width: 400px;
+}
+
 .goal {
   width: 340px;
 }
