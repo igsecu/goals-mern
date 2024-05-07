@@ -3,6 +3,7 @@ import Dashboard from "./pages/Dashboard";
 import CreateGoal from "./pages/CreateGoal";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import NotFoundPage from "./pages/NotFoundPage";
 
 import { GlobalProvider } from "./context/GlobalState";
 
@@ -22,12 +23,12 @@ function App() {
               <Route path="/login" element={<Login />} />{" "}
               <Route path="/register" element={<Register />} />
             </Route>
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Router>
       </GlobalProvider>
       <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
+        position="top-right"
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
