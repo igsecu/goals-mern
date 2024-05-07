@@ -2,10 +2,10 @@ import React from "react";
 
 import { GlobalContext } from "../context/GlobalState";
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import logo from "../images/goals.png";
-import { FaCircle, FaCheck, FaArrowRight } from "react-icons/fa";
+import { FaCircle, FaCheck } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
 
 const NavbarDashboard = ({
@@ -24,6 +24,7 @@ const NavbarDashboard = ({
     postCompleted,
   } = useContext(GlobalContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const logoutUser = () => {
     localStorage.removeItem("user");
@@ -60,15 +61,9 @@ const NavbarDashboard = ({
     setShowHigh(false);
     setShowCompleted(true);
   };
-  const showAll = () => {
-    setShowLow(true);
-    setShowMedium(true);
-    setShowHigh(true);
-    setShowCompleted(true);
-  };
 
   return (
-    <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-3 text-white ">
+    <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-3 text-white">
       <div className="container-fluid">
         <div className="d-flex flex-justify-start align-items-center">
           <img src={logo} alt="logo" style={{ width: "50px" }} />
@@ -84,81 +79,73 @@ const NavbarDashboard = ({
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse " id="navmenu">
-          <ul className="navbar-nav ms-auto">
-            <div className="d-block d-lg-none border-bottom border-1 p-2 mb-2">
-              <li className="nav-item">
-                <div
-                  className="nav-link text-white d-flex justify-content-center align-items-center"
-                  onClick={showLowGoals}
-                  style={{ cursor: "pointer" }}
-                >
-                  <FaCircle className="text-success me-2" />
-                  <p className="mb-0">Low Urgency Goals</p>
-                </div>
-              </li>
-              <li className="nav-item">
-                <div
-                  className="nav-link text-white d-flex justify-content-center align-items-center"
-                  onClick={showMediumGoals}
-                  style={{ cursor: "pointer" }}
-                >
-                  <FaCircle className="text-warning me-2" />
-                  <p className="mb-0">Medium Urgency Goals</p>
-                </div>
-              </li>
-              <li className="nav-item">
-                <div
-                  className="nav-link text-white d-flex justify-content-center align-items-center"
-                  onClick={showHighGoals}
-                  style={{ cursor: "pointer" }}
-                >
-                  <FaCircle className="text-danger me-2" />
-                  <p className="mb-0">High Urgency Goals</p>
-                </div>
-              </li>
-              <li className="nav-item">
-                <div
-                  className="nav-link text-white d-flex justify-content-center align-items-center"
-                  onClick={showCompletedGoals}
-                  style={{ cursor: "pointer" }}
-                >
-                  <FaCheck className="text-primary me-2" />
-                  <p className="mb-0">Completed Goals</p>
-                </div>
-              </li>
-              <li className="nav-item">
-                <div
-                  className="nav-link text-white d-flex justify-content-center align-items-center"
-                  onClick={showAll}
-                  style={{ cursor: "pointer" }}
-                >
-                  <FaArrowRight className="text-white me-2" />
-                  <p className="mb-0">All Goals</p>
-                </div>
-              </li>
-            </div>
+        <div className="collapse navbar-collapse" id="navmenu">
+          <div className="navbar-nav ms-auto">
+            {location.pathname !== "/create-goal" && (
+              <div className="d-block d-lg-none border-bottom border-1 p-2 mb-2">
+                <li className="nav-item">
+                  <div
+                    className="nav-link text-white d-flex justify-content-center align-items-center"
+                    onClick={showLowGoals}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <FaCircle className="text-success me-2" />
+                    <p className="mb-0">Low Urgency Goals</p>
+                  </div>
+                </li>
+                <li className="nav-item">
+                  <div
+                    className="nav-link text-white d-flex justify-content-center align-items-center"
+                    onClick={showMediumGoals}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <FaCircle className="text-warning me-2" />
+                    <p className="mb-0">Medium Urgency Goals</p>
+                  </div>
+                </li>
+                <li className="nav-item">
+                  <div
+                    className="nav-link text-white d-flex justify-content-center align-items-center"
+                    onClick={showHighGoals}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <FaCircle className="text-danger me-2" />
+                    <p className="mb-0">High Urgency Goals</p>
+                  </div>
+                </li>
+                <li className="nav-item">
+                  <div
+                    className="nav-link text-white d-flex justify-content-center align-items-center"
+                    onClick={showCompletedGoals}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <FaCheck className="text-primary me-2" />
+                    <p className="mb-0">Completed Goals</p>
+                  </div>
+                </li>
+              </div>
+            )}
 
-            <div className="d-none d-lg-block d-flex flex-column align-items-center p-2 justify-content-center dropdown">
+            <div className="d-none d-lg-block d-flex align-items-center p-2 dropdown">
               <div
-                className=" d-flex align-items-center"
+                className="d-flex align-items-center"
                 data-bs-toggle="dropdown"
                 style={{ cursor: "pointer" }}
               >
                 <h5 className="mb-0 ">Hello, {user?.name}!</h5>
               </div>
-              <ul className="dropdown-menu border-0 bg-dark rounded-0">
-                <li>
-                  <div
-                    className="text-white d-flex align-items-center ps-3 pb-2"
-                    style={{ cursor: "pointer" }}
-                    onClick={logoutUser}
-                  >
-                    <MdLogout />
-                    <p className="mb-0 ms-2">Logout</p>
-                  </div>
-                </li>
-              </ul>
+              <div className="dropdown-menu border-0 rounded-0 bg-dark dropmenu">
+                <div
+                  className="text-white d-flex align-items-center ps-3"
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  onClick={logoutUser}
+                >
+                  <MdLogout />
+                  <span className="mb-0 ms-2">Logout</span>
+                </div>
+              </div>
             </div>
 
             <div className="d-block d-lg-none d-flex flex-column align-items-center p-2 justify-content-center">
@@ -179,7 +166,7 @@ const NavbarDashboard = ({
                 <p className="mb-0 ms-2">Logout</p>
               </div>
             </div>
-          </ul>
+          </div>
         </div>
       </div>
     </nav>
