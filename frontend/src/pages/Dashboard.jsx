@@ -10,6 +10,8 @@ import HighGoal from "../components/HighGoal";
 import CompletedGoal from "../components/CompletedGoal";
 import Spinner from "../components/Spinner";
 import NoFound from "../components/NoFound";
+import NoFoundUrgency from "../components/NoFoundUrgency";
+import Footer from "../components/Footer";
 
 import { FaPlus } from "react-icons/fa";
 
@@ -108,14 +110,17 @@ const Dashboard = () => {
     };
 
     if (loaded === false) {
-      fetchLow();
-      fetchMedium();
-      fetchHigh();
-      fetchCompleted();
-      setLoaded(true);
+      if (user !== null) {
+        fetchLow();
+        fetchMedium();
+        fetchHigh();
+        fetchCompleted();
+        setLoaded(true);
+      }
     }
   }, [
-    user.token,
+    user,
+    user?.token,
     postCompleted,
     postHigh,
     postLow,
@@ -125,7 +130,7 @@ const Dashboard = () => {
   ]);
 
   useEffect(() => {
-    if (!user) {
+    if (user === null) {
       navigate("/login");
     }
   }, [user, navigate]);
@@ -148,8 +153,21 @@ const Dashboard = () => {
   }, [totalGoals, low, medium, high, completed]);
 
   useEffect(() => {
+    if (width < 992) {
+      setShowLow(true);
+      setShowMedium(false);
+      setShowHigh(false);
+      setShowCompleted(false);
+    }
     const handleResize = () => {
       setWidth(window.innerWidth);
+
+      if (width < 992) {
+        setShowLow(true);
+        setShowMedium(false);
+        setShowHigh(false);
+        setShowCompleted(false);
+      }
 
       if (width > 992) {
         setShowLow(true);
@@ -185,7 +203,7 @@ const Dashboard = () => {
               >
                 <div
                   className={`progress-bar ${
-                    process === 100 ? "bg-success" : ""
+                    process === "100" ? "bg-success" : "bg-info"
                   }`}
                   style={{ width: `${process}%` }}
                 >
@@ -201,15 +219,21 @@ const Dashboard = () => {
             </Link>
           </div>
 
-          <div className="container-fluid bg-dark h-100 p-4">
-            <div className="row h-100">
+          <div
+            className="container-fluid bg-dark p-4 overflow-scroll"
+            style={{ height: "650px" }}
+          >
+            <div className="row">
               {showLow ? (
                 <div
                   className="col-lg-3 overflow-scroll d-flex flex-column align-items-center"
-                  style={{ height: "650px" }}
+                  style={{ maxHeight: "600px" }}
                 >
-                  {typeof low === "string" ? (
-                    <p className="text-white">{low}</p>
+                  {low?.length === 0 &&
+                  !showMedium &&
+                  !showHigh &&
+                  !showCompleted ? (
+                    <NoFoundUrgency text={"low"} />
                   ) : (
                     low?.map((g) => <LowGoal key={g._id} goal={g} />)
                   )}
@@ -220,10 +244,13 @@ const Dashboard = () => {
               {showMedium ? (
                 <div
                   className="col-lg-3 overflow-scroll d-flex flex-column align-items-center"
-                  style={{ height: "650px" }}
+                  style={{ maxHeight: "600px" }}
                 >
-                  {typeof medium === "string" ? (
-                    <p className="text-white">{medium}</p>
+                  {medium?.length === 0 &&
+                  !showLow &&
+                  !showHigh &&
+                  !showCompleted ? (
+                    <NoFoundUrgency text={"medium"} />
                   ) : (
                     medium?.map((g) => <MediumGoal key={g._id} goal={g} />)
                   )}
@@ -234,10 +261,13 @@ const Dashboard = () => {
               {showHigh ? (
                 <div
                   className="col-lg-3 overflow-scroll d-flex flex-column align-items-center"
-                  style={{ height: "650px" }}
+                  style={{ maxHeight: "600px" }}
                 >
-                  {typeof high === "string" ? (
-                    <p className="text-white">{high}</p>
+                  {high?.length === 0 &&
+                  !showLow &&
+                  !showMedium &&
+                  !showCompleted ? (
+                    <NoFoundUrgency text={"high"} />
                   ) : (
                     high?.map((g) => <HighGoal key={g._id} goal={g} />)
                   )}
@@ -248,10 +278,13 @@ const Dashboard = () => {
               {showCompleted ? (
                 <div
                   className="col-lg-3 overflow-scroll d-flex flex-column align-items-center"
-                  style={{ height: "650px" }}
+                  style={{ maxHeight: "600px" }}
                 >
-                  {typeof completed === "string" ? (
-                    <p className="text-white">{completed}</p>
+                  {completed?.length === 0 &&
+                  !showLow &&
+                  !showMedium &&
+                  !showHigh ? (
+                    <NoFoundUrgency text={"completed"} />
                   ) : (
                     completed?.map((g) => (
                       <CompletedGoal key={g._id} goal={g} />
@@ -267,6 +300,7 @@ const Dashboard = () => {
       ) : (
         <NoFound />
       )}
+      <Footer />
     </div>
   );
 };
