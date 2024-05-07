@@ -185,20 +185,6 @@ const updateTaskCompleted = async (req, res, next) => {
       goal: task.goal,
     });
 
-    if (tasks.every((t) => t.status === "COMPLETED")) {
-      const goalUpdated = await Goal.findByIdAndUpdate(
-        task.goal,
-        { isCompleted: true },
-        { new: true }
-      );
-
-      return res.status(200).json({
-        statusCode: 200,
-        msg: `You completed the Goal: ${goalUpdated.title}!`,
-        data: goalUpdated,
-      });
-    }
-
     res.status(200).json({
       statusCode: 200,
       msg: "Task updated successfully!",
