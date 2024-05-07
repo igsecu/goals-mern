@@ -29,13 +29,13 @@ const Note = ({ note, goal, action, user }) => {
   };
 
   return (
-    <div className="w-100 px-2 py-1 d-flex justify-content-between">
+    <div className="w-100 p-2 d-flex justify-content-between border mb-2">
       <p className="mb-0 fw-bold" style={{ fontSize: "14px" }}>
         {note.text}
       </p>
 
       {goal.isCompleted === false && (
-        <div className="d-flex justify-content-end mb-2">
+        <div className="d-flex justify-content-end">
           <MdDelete
             className="text-dark fs-4"
             type="button"
