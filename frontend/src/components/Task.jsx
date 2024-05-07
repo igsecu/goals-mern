@@ -1,14 +1,9 @@
 import { MdDelete } from "react-icons/md";
 import { FaArrowUp } from "react-icons/fa";
 
-import { GlobalContext } from "../context/GlobalState";
-import { useContext } from "react";
-
 import { toast } from "react-toastify";
 
 const Task = ({ task, goal, postAction, action, user, goals }) => {
-  const { completed, postCompleted } = useContext(GlobalContext);
-
   const deleteTask = async (id) => {
     const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
       method: "DELETE",
@@ -72,40 +67,22 @@ const Task = ({ task, goal, postAction, action, user, goals }) => {
       if (data.statusCode === 200) {
         task.status = "COMPLETED";
         goal.tasks = goal.tasks.map((t) => (t._id === id ? task : t));
-        if (data.msg.startsWith("You completed")) {
-          const aux = goals.filter((l) => l._id !== goal._id);
-          postAction(aux);
 
-          const auxCompleted = [goal, ...completed];
-          postCompleted(auxCompleted);
-          toast.success(data.msg, {
-            position: "bottom-right",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          return;
-        } else {
-          action(goal);
-          return;
-        }
+        action(goal);
+        return;
       }
     }
   };
 
   return (
-    <div className="w-100 px-2 py-1 d-flex justify-content-between">
+    <div className="w-100 p-2 d-flex justify-content-between border mb-2">
       <div>
         <p className="mb-0 fw-bold" style={{ fontSize: "14px" }}>
           {task.text}
         </p>
 
         <p
-          className={`fw-bold mb-2 ${
+          className={`fw-bold mb-0 ${
             task.status === "NOT STARTED"
               ? "text-danger"
               : task.status === "IN PROGRESS"
@@ -118,7 +95,7 @@ const Task = ({ task, goal, postAction, action, user, goals }) => {
         </p>
       </div>
       {goal.isCompleted === false && (
-        <div className="d-flex justify-content-end">
+        <div className="d-flex justify-content-end align-items-center">
           {task.status !== "COMPLETED" && (
             <FaArrowUp
               className="text-dark fs-5 me-2"
