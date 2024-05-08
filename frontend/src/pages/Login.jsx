@@ -123,7 +123,12 @@ const Login = () => {
               </form>
             </div>
             <div>
-              <img className="d-none d-lg-block" src={logo} alt="" />
+              <img
+                className="d-none d-md-block"
+                src={logo}
+                alt=""
+                style={{ width: "300px" }}
+              />
             </div>
           </div>
         )}
