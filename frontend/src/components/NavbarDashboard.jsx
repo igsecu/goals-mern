@@ -66,8 +66,10 @@ const NavbarDashboard = ({
     <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-3 text-white">
       <div className="container-fluid">
         <div className="d-flex flex-justify-start align-items-center">
-          <img src={logo} alt="logo" style={{ width: "50px" }} />
-          <h1 className="mb-0">Goals</h1>
+          <img src={logo} alt="logo" style={{ width: "40px" }} />
+          <h2 className="mb-0">
+            Goals<span className="text-danger">Manager</span>
+          </h2>
         </div>
 
         <button
@@ -132,7 +134,7 @@ const NavbarDashboard = ({
                 data-bs-toggle="dropdown"
                 style={{ cursor: "pointer" }}
               >
-                <h5 className="mb-0 ">Hello, {user?.name}!</h5>
+                <p className="mb-0 fw-bold">Hello, {user?.name}!</p>
               </div>
               <div className="dropdown-menu border-0 rounded-0 bg-dark dropmenu">
                 <div
@@ -154,7 +156,7 @@ const NavbarDashboard = ({
                 data-bs-toggle="dropdown"
                 style={{ cursor: "pointer" }}
               >
-                <h5 className="mb-0 ">Hello, {user?.name}!</h5>
+                <p className="mb-0 fw-bold">Hello, {user?.name}!</p>
               </div>
 
               <div
